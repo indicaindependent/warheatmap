@@ -1,40 +1,31 @@
-# wrangler.toml.example
-# Copy to wrangler.toml and fill in your values
-# NEVER commit the real wrangler.toml with your account ID / database IDs
-
-name = "your-worker-name"
-main = "worker.js"
+name = "warheatmap"
+main = "workers/warheatmap-worker.js"
 compatibility_date = "2024-01-01"
-compatibility_flags = ["nodejs_compat"]
 
-account_id = "YOUR_CF_ACCOUNT_ID"
-
-# D1 Database (create with: wrangler d1 create your-db-name)
+# D1 Database binding
 [[d1_databases]]
 binding = "DB"
-database_name = "your-db-name"
+database_name = "warheatmap-db"
 database_id = "YOUR_D1_DATABASE_ID"
 
-# KV Namespace (create with: wrangler kv:namespace create your-kv)
+# KV Namespace bindings
 [[kv_namespaces]]
-binding = "KV"
+binding = "ANALYTICS_KV"
 id = "YOUR_KV_NAMESPACE_ID"
 
-# Environment variables (non-secret)
-[vars]
-ENVIRONMENT = "production"
+[[kv_namespaces]]
+binding = "STRAIT_NEWS_KV"
+id = "YOUR_STRAIT_KV_NAMESPACE_ID"
 
-# Secrets (set with: wrangler secret put SECRET_NAME)
-# BSKY_APP_PASS
-# ANTHROPIC_API_KEY
-# NEWS_API_KEY
-# WORKER_SECRET
+# R2 Bucket
+[[r2_buckets]]
+binding = "ASSETS"
+bucket_name = "warheatmap-assets"
 
-# Cron triggers
-[triggers]
-crons = ["0 15 * * *"]   # Daily at 3pm UTC (11am ET)
+# Secrets (set via: wrangler secret put BSKY_APP_PASSWORD)
+# BSKY_APP_PASSWORD — Bluesky app password for AT Protocol posting
 
-# Custom domain routes
+# Routes
 [[routes]]
-pattern = "yourdomain.com/*"
-zone_name = "yourdomain.com"
+pattern = "warheatmap.app/*"
+zone_name = "warheatmap.app"

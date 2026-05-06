@@ -1,0 +1,4 @@
+# Force GitHub Linguist to detect languages correctly
+worker.js linguist-language=JavaScript linguist-detectable=true
+workers/*.js linguist-language=JavaScript linguist-detectable=true
+*.js linguist-detectable=true

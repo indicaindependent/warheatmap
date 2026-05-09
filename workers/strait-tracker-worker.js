@@ -1,23 +1,9 @@
-// WarHeatMap — Strait Tracker Worker
-// tracker.warheatmap.app
-// Part of the WarHeatMap OSINT platform: https://warheatmap.app
-// GitHub: https://github.com/indicaindependent/warheatmap
-// Author: Indica Independent Media (https://osintnet.uk)
-// License: MIT
-//
-// SETUP: Requires Cloudflare Worker environment with:
-//   - BSKY_APP_PASSWORD (Bluesky app password for auto-posting)
-//   - strait-news-kv (KV namespace binding)
-//
-// Deploy: wrangler deploy workers/strait-tracker-worker.js
-// ============================================================
-
-// StraitTracker — Cloudflare Edge Worker v5.6 — May 1 2026
+// StraitTracker — Cloudflare Edge Worker v6.0 — May 9 2026
 // tracker.warheatmap.app | Built by Bumboclaat for Pete McVries
-// UPDATE: IRGC seizes MSC Francesca + Epaminondas · 3 ships fired upon · Hero II/Hedy supertankers go dark
-//         Trump extends ceasefire INDEFINITELY but blockade stays · US intercepts 3 Iranian tankers in Asia
-//         ~May 1 2026 · BLOCKADE ACTIVE · TRUMP BRIEFED ON MILITARY OPTIONS · KHAMENEI PLEDGES NEW HORMUZ MANAGEMENT
-// bundle-bust-2026042330
+// UPDATE: Operation Project Freedom launched May 4, paused May 5 · US F/A-18s strafe Iranian tankers May 9
+//         Iran seizes Ocean Koi tanker · Fragile ceasefire holds despite active strikes
+//         Iran imposes new Hormuz transit rules · Trump threatens Project Freedom resumption
+// bundle-bust-2026050901
 
 const TOKEN_WINDOW_MS = 60 * 60 * 1000;
 
@@ -138,7 +124,7 @@ function getHTML() {
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>StraitTracker v5.6 — Hormuz OSINT | May 1, 2026</title>
+<title>Strait of Hormuz Live | Operation Project Freedom | US-Iran War 2026</title>
 <!-- SVG map — no external deps needed -->
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -151,7 +137,7 @@ function getHTML() {
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 
 /* ── LAYOUT ── */
-#app{display:grid;grid-template-rows:auto auto 1fr auto;grid-template-columns:340px 1fr 300px;height:100vh;gap:0;overflow:hidden}
+#app{display:grid;grid-template-rows:auto auto auto auto 1fr auto;grid-template-columns:340px 1fr 300px;height:100vh;gap:0;overflow:hidden}
 #topbar{grid-column:1/-1;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:1rem;padding:0.5rem 1rem;flex-wrap:wrap;z-index:999}
 #ticker-bar{grid-column:1/-1;background:#080d17;border-bottom:1px solid var(--border);overflow:hidden;height:32px;display:flex;align-items:center}
 #left-panel{background:var(--panel);border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column;gap:0;min-height:0}
@@ -249,6 +235,41 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 .sb-dot.live{background:var(--green)}.sb-dot.warn{background:var(--orange)}.sb-dot.dead{background:var(--red)}
 
+
+/* ── OP FREEDOM BANNER ── */
+#op-banner{grid-column:1/-1;display:flex;align-items:center;gap:0.75rem;padding:0.4rem 1rem;font-size:0.72rem;font-weight:700;letter-spacing:0.04em;border-bottom:1px solid;transition:all 0.3s}
+#op-banner.active{background:rgba(255,58,58,0.12);border-color:rgba(255,58,58,0.4);color:var(--red)}
+#op-banner.paused{background:rgba(255,122,0,0.1);border-color:rgba(255,122,0,0.35);color:var(--orange)}
+#op-banner.suspended{background:rgba(100,116,139,0.1);border-color:rgba(100,116,139,0.3);color:var(--muted)}
+#op-banner.ended{background:rgba(0,230,118,0.08);border-color:rgba(0,230,118,0.3);color:var(--green)}
+.op-icon{font-size:1.1rem;flex-shrink:0}
+.op-name{font-size:0.75rem;font-weight:900;letter-spacing:0.06em}
+.op-status-text{font-size:0.68rem;opacity:0.9}
+.op-detail-text{font-size:0.63rem;opacity:0.7;font-weight:400;margin-left:0.5rem}
+@keyframes op-pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+#op-banner.active .op-icon{animation:op-pulse 1.2s ease-in-out infinite}
+
+/* ── STALE DATA WARNING ── */
+#stale-warning{display:none;background:rgba(255,122,0,0.12);border-bottom:1px solid rgba(255,122,0,0.3);color:var(--orange);font-size:0.65rem;padding:0.25rem 1rem;text-align:center;grid-column:1/-1}
+
+/* ── FRESHNESS BADGE ── */
+#freshness-badge{font-size:0.6rem;color:var(--muted);padding:0.15rem 0.5rem;background:rgba(255,255,255,0.04);border-radius:3px}
+#freshness-badge.fresh{color:var(--green)}
+#freshness-badge.stale{color:var(--red)}
+
+/* ── UPDATED INTEL CARD ── */
+.intel-card{background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;padding:0.85rem;margin-bottom:0.75rem;transition:border-color 0.2s}
+.intel-card:hover{border-color:rgba(255,255,255,0.15)}
+.intel-tag{display:inline-block;padding:0.15rem 0.5rem;border-radius:3px;font-size:0.6rem;font-weight:800;letter-spacing:0.08em;border:1px solid;margin-bottom:0.5rem}
+.intel-header{display:flex;align-items:flex-start;gap:0.6rem;margin-bottom:0.4rem}
+.intel-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0}
+.intel-title{font-size:0.78rem;font-weight:700;line-height:1.3}
+.intel-body{font-size:0.72rem;color:#94a3b8;line-height:1.5;margin-bottom:0.4rem}
+.intel-src{font-size:0.6rem;color:#475569}
+
+/* ── UPDATED SITREP STATS ── */
+.stat-val.loading{opacity:0.4}
+
 /* scrollbar */
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#1e2d3d;border-radius:2px}
 </style>
@@ -256,22 +277,36 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 <body>
 <div id="app">
 
+<!-- STALE DATA WARNING -->
+<div id="stale-warning">⚠ INTELLIGENCE DATA MAY BE DELAYED — <span id="stale-age"></span> — Retrying...</div>
+
+<!-- OPERATION PROJECT FREEDOM BANNER -->
+<div id="op-banner" class="paused">
+  <span class="op-icon">⚡</span>
+  <div>
+    <span class="op-name">OPERATION PROJECT FREEDOM</span>
+    <span class="op-status-text" id="op-status-text"> · LOADING...</span>
+    <span class="op-detail-text" id="op-detail-text"></span>
+  </div>
+  <span id="freshness-badge" style="margin-left:auto">⟳ LOADING</span>
+</div>
+
 <!-- TOP BAR -->
 <div id="topbar">
-  <div class="logo"><span>STRAIT</span>TRACKER<sub>v5.6 · OSINT</sub></div>
-  <div class="threat-badge badge-critical" id="threat-level">🔴 CRITICAL — MILITARY OPTIONS BRIEFED · MAY 1 2026</div>
+  <div class="logo"><span>STRAIT</span>TRACKER<sub>v6.0 · LIVE</sub></div>
+  <div class="threat-badge badge-critical" id="threat-level">🔴 CRITICAL — LOADING LIVE INTEL...</div>
   <div id="countdown-pill">
-    <span class="cd-label">CEASEFIRE</span>
-    <span class="cd-time" id="countdown">DAY 15</span>
+    <span class="cd-label">WAR DAY</span>
+    <span class="cd-time" id="countdown">--</span>
   </div>
   <div class="price-pill">
     <span class="label">WTI</span>
-    <span class="val" id="wti-price">~$107</span>
+    <span class="val" id="wti-price">--</span>
     <span class="chg" id="wti-chg">--</span>
   </div>
   <div class="price-pill">
     <span class="label">BRENT</span>
-    <span class="val" id="brent-price">~$114</span>
+    <span class="val" id="brent-price">--</span>
     <span class="chg" id="brent-chg">--</span>
   </div>
   <div class="price-pill">
@@ -281,20 +316,15 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
   </div>
   <div class="price-pill">
     <span class="label">DAY</span>
-    <span class="val" id="war-day">65</span>
+    <span class="val" id="war-day">--</span>
     <span class="chg chg-dn">WAR</span>
   </div>
-  <span id="auto-refresh-badge">⟳ AUTO 5m</span>
-    <div id="ais-badge" style="display:flex;align-items:center;gap:5px;background:rgba(0,180,255,0.08);border:1px solid rgba(0,180,255,0.25);border-radius:20px;padding:0.25rem 0.75rem;font-size:0.72rem;">
-    <span style="color:#00b4ff;font-weight:800;font-size:0.62rem;letter-spacing:0.06em;text-transform:uppercase;">AIS</span>
-    <span style="font-family:monospace;font-weight:900;color:#fff;" id="ais-count">--</span>
-    <span style="color:#64748b;font-size:0.65rem;">vessels</span>
-  </div>
+  <span id="auto-refresh-badge">⟳ AUTO 15m</span>
   <button class="refresh-btn" onclick="forceRefresh()">↻ NOW</button>
   <span id="last-refresh">Initializing...</span>
 </div>
 
-<!-- TICKER — April 22 breaking intel -->
+<!-- TICKER — Live intelligence feed -->
 <div id="ticker-bar">
   <div id="ticker-inner"><span>⏳ Loading live intelligence feed...</span></div>
 </div>
@@ -304,21 +334,21 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 
   <!-- SITREP STATS -->
   <div class="panel-section">
-    <div class="panel-title">📊 SITREP — APR 22, 2026</div>
-    <div class="stat-row"><span class="stat-label">War Day</span><span class="stat-val red" id="war-day-stat">65</span></div>
-    <div class="stat-row"><span class="stat-label">Ceasefire Status</span><span class="stat-val green" id="st-ceasefire">FRAGILE — DAY 15</span></div>
-    <div class="stat-row"><span class="stat-label">US Blockade</span><span class="stat-val red" id="st-blockade">ACTIVE — $6B TRAPPED</span></div>
-    <div class="stat-row"><span class="stat-label">Hormuz Status</span><span class="stat-val red" id="st-hormuz">EFFECTIVELY CLOSED</span></div>
-    <div class="stat-row"><span class="stat-label">Today: Ships Fired On</span><span class="stat-val red" id="st-fired">3 CVNs ON STATION</span></div>
-    <div class="stat-row"><span class="stat-label">Today: Ships Seized</span><span class="stat-val red" id="st-seized">2 SEIZED (APR 22)</span></div>
-    <div class="stat-row"><span class="stat-label">Total Vessels Interdicted</span><span class="stat-val orange" id="st-interdicted">42 REDIRECTED (CENTCOM)</span></div>
-    <div class="stat-row"><span class="stat-label">Vessels Trapped in Gulf</span><span class="stat-val orange" id="st-trapped">41 TANKERS TRAPPED</span></div>
-    <div class="stat-row"><span class="stat-label">AIS-Dark VLCCs</span><span class="stat-val purple">HERO II + HEDY + 41 OTHERS</span></div>
-    <div class="stat-row"><span class="stat-label">Iranian Tankers Crossed</span><span class="stat-val yellow">42+ TOTAL (CENTCOM CONFIRMED)</span></div>
-    <div class="stat-row"><span class="stat-label">US Navy Boardings</span><span class="stat-val blue">2+ SANCTIONED TANKERS</span></div>
-    <div class="stat-row"><span class="stat-label">Asian Waters Intercepts</span><span class="stat-val blue">42 TOTAL SINCE START</span></div>
-    <div class="stat-row"><span class="stat-label">Peace Talks Status</span><span class="stat-val red" id="st-talks">IRAN: NUCLEAR NON-NEGOTIABLE</span></div>
-    <div class="stat-row"><span class="stat-label">Supply Eliminated</span><span class="stat-val red" id="st-supply">69M BBLS · $6B+ BLOCKED</span></div>
+    <div class="panel-title">📊 SITREP — <span id="sitrep-date">LOADING...</span></div>
+    <div class="stat-row"><span class="stat-label">War Day</span><span class="stat-val red loading" id="war-day-stat">--</span></div>
+    <div class="stat-row"><span class="stat-label">Ceasefire Status</span><span class="stat-val green" id="st-ceasefire">EXTENDED (INDEFINITE)</span></div>
+    <div class="stat-row"><span class="stat-label">US Blockade</span><span class="stat-val red loading" id="st-blockade">LOADING...</span></div>
+    <div class="stat-row"><span class="stat-label">Hormuz Status</span><span class="stat-val red loading" id="st-hormuz">LOADING...</span></div>
+    <div class="stat-row"><span class="stat-label">Today: Ships Fired On</span><span class="stat-val red" id="st-fired">3 (APR 22)</span></div>
+    <div class="stat-row"><span class="stat-label">Today: Ships Seized</span><span class="stat-val red" id="st-seized">2 (MSC FRANCESCA, EPAMINONDAS)</span></div>
+    <div class="stat-row"><span class="stat-label">Total Vessels Interdicted</span><span class="stat-val orange" id="st-interdicted">34+ TURNED BACK (US)</span></div>
+    <div class="stat-row"><span class="stat-label">Vessels Trapped in Gulf</span><span class="stat-val orange" id="st-trapped">~800</span></div>
+    <div class="stat-row"><span class="stat-label">AIS-Dark VLCCs</span><span class="stat-val purple">HERO II + HEDY (4M BBL)</span></div>
+    <div class="stat-row"><span class="stat-label">Iranian Tankers Crossed</span><span class="stat-val yellow">34+ (since last wk)</span></div>
+    <div class="stat-row"><span class="stat-label">US Navy Boardings</span><span class="stat-val blue">2 (SANCTIONED VESSELS)</span></div>
+    <div class="stat-row"><span class="stat-label">Asian Waters Intercepts</span><span class="stat-val blue">3 (TODAY)</span></div>
+    <div class="stat-row"><span class="stat-label">Peace Talks Status</span><span class="stat-val red" id="st-talks">STALLED — IRAN PROPOSAL PENDING</span></div>
+    <div class="stat-row"><span class="stat-label">Supply Eliminated</span><span class="stat-val red" id="st-supply">1B BARRELS</span></div>
   </div>
 
   <!-- LAYER CONTROLS -->
@@ -439,7 +469,151 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 </div>
 
 <script>
-window.addEventListener("load", function() {
+
+  // ── WAR DAY COUNTER ─────────────────────────────────────────────
+  var WAR_START_DATE = new Date('2026-02-27T00:00:00Z');
+  function updateWarDay() {
+    var dayNum = Math.floor((Date.now() - WAR_START_DATE.getTime()) / 86400000);
+    var el = document.getElementById('war-day-pill');
+    if (el) el.textContent = 'WAR DAY ' + dayNum;
+    var el2 = document.getElementById('sb-war-day');
+    if (el2) el2.textContent = 'Day ' + dayNum;
+    // Also update any element with id="war-day" or id="war-day-stat"
+    var wd = document.getElementById('war-day');
+    if (wd) wd.textContent = dayNum;
+    var wds = document.getElementById('war-day-stat');
+    if (wds) wds.textContent = dayNum;
+    var cd = document.getElementById('countdown');
+    if (cd) cd.textContent = dayNum;
+    return dayNum;
+  }
+
+  // ── PRICE CACHE (once per day) ───────────────────────────────────
+  var PRICE_CACHE_KEY = 'strait_prices_v1';
+  var PRICE_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+
+  function getPriceCache() {
+    try {
+      var raw = localStorage.getItem(PRICE_CACHE_KEY);
+      if (!raw) return null;
+      var obj = JSON.parse(raw);
+      if (!obj || !obj.ts) return null;
+      if (Date.now() - obj.ts > PRICE_CACHE_TTL) return null; // stale
+      return obj;
+    } catch(e) { return null; }
+  }
+
+  function setPriceCache(data) {
+    try {
+      localStorage.setItem(PRICE_CACHE_KEY, JSON.stringify({ ts: Date.now(), data: data }));
+    } catch(e) {}
+  }
+
+  function applyPrices(prices) {
+    function setPrice(priceId, chgId, price, change) {
+      var pe = document.getElementById(priceId);
+      var ce = document.getElementById(chgId);
+      if (pe && price) pe.textContent = '$' + parseFloat(price).toFixed(2);
+      if (ce && change !== undefined && change !== null) {
+        var chg = parseFloat(change);
+        ce.textContent = (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%';
+        ce.className = 'chg ' + (chg >= 0 ? 'up' : 'down');
+      }
+    }
+    if (prices.brent)  setPrice('brent-price','brent-chg', prices.brent, prices.brent_change);
+    if (prices.wti)    setPrice('wti-price','wti-chg', prices.wti, prices.wti_change);
+    if (prices.btc)    setPrice('btc-price','btc-chg', prices.btc, prices.btc_change);
+    // Update statusbar
+    var sb = document.getElementById('sb-prices');
+    if (sb && prices.brent && prices.wti) {
+      sb.textContent = 'Brent $' + parseFloat(prices.brent).toFixed(2) + ' | WTI $' + parseFloat(prices.wti).toFixed(2) + (prices.btc ? ' | BTC $' + Math.round(parseFloat(prices.btc)).toLocaleString() : '');
+    }
+    // Topbar uses id="wti-price", "brent-price", "btc-price" — already set by setPrice() above
+  }
+
+  function fetchPricesFromAPI() {
+    // Get oil from our intel API (pre-fetched server-side) — avoids CORS entirely
+    fetch(INTEL_API + '/oil-live')
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        var prices = {
+          brent: d.brent || d.brent_price,
+          brent_change: d.brent_change,
+          wti: d.wti || d.wti_price,
+          wti_change: d.wti_change,
+          btc: d.btc,
+          btc_change: d.btc_change
+        };
+        // Also check if intel payload already has oil
+        if (!prices.brent && d.oil) {
+          prices.brent = d.oil.brent;
+          prices.wti = d.oil.wti;
+        }
+        applyPrices(prices);
+        setPriceCache(prices);
+      })
+      .catch(function(e) {
+        console.warn('[StraitTracker] Price fetch failed:', e);
+        // Try to use prices from cached intel
+        try {
+          var cached = JSON.parse(localStorage.getItem('strait_intel_v3') || 'null');
+          if (cached && cached.oil) applyPrices({ brent: cached.oil.brent, wti: cached.oil.wti });
+        } catch(ee) {}
+      });
+  }
+
+  function refreshPrices() {
+    // Check daily cache first
+    var cached = getPriceCache();
+    if (cached) {
+      applyPrices(cached.data);
+      console.log('[StraitTracker] Prices loaded from daily cache');
+      return;
+    }
+    // Cache stale or missing — fetch fresh
+    console.log('[StraitTracker] Fetching fresh prices from API...');
+    fetchPricesFromAPI();
+  }
+
+  function autoRefresh() {
+    // Called every 5 min for non-price data; prices refresh once per day
+    var priceCache = getPriceCache();
+    if (!priceCache) fetchPricesFromAPI(); // only re-fetch prices if cache expired
+    // Always re-check freshness badge
+    try {
+      var c = JSON.parse(localStorage.getItem('strait_intel_v3') || 'null');
+      if (c && c.updated) updateFreshnessBadge(c.updated);
+    } catch(e) {}
+  }
+
+  function updateStatusbar() {
+    // Set vessels count from current data
+    var sb = document.getElementById('sb-vessels');
+    if (sb) sb.textContent = 'Vessels: 34+ turned back';
+  }
+
+  function forceRefresh() {
+    // Clear price cache to force re-fetch
+    localStorage.removeItem(PRICE_CACHE_KEY);
+    // Show loading state
+    var pb = document.getElementById('brent-price');
+    var pw = document.getElementById('wti-price');
+    if (pb) pb.textContent = '...';
+    if (pw) pw.textContent = '...';
+    // Re-fetch everything
+    loadLiveIntel();
+    fetchPricesFromAPI();
+    updateWarDay();
+    // Flash NOW button
+    var btn = document.querySelector('.refresh-btn');
+    if (btn) {
+      btn.textContent = '⟳ FETCHING...';
+      setTimeout(function() { btn.textContent = '↻ NOW'; }, 3000);
+    }
+  }
+
+
+  window.addEventListener("load", function() {
   const PROXY = '/proxy?url=';
   // War started late Feb 2026 (~Feb 27)
   const WAR_START = new Date('2026-02-27T00:00:00Z');
@@ -622,7 +796,7 @@ window.addEventListener("load", function() {
   // LIVE INTEL FEED — Auto-refreshes every 15 minutes
   // Source: strait-news-worker (Claude + NewsAPI aggregation)
   // ═══════════════════════════════════════════════════════════════
-  const INTEL_API = 'https://news.ptsdtree.com';
+  const INTEL_API = 'https://strait-news-worker.thom-rvr.workers.dev';
   const TAG_COLORS = {
     red:    'rgba(255,58,58,0.15)',
     orange: 'rgba(255,122,0,0.15)',
@@ -665,55 +839,59 @@ window.addEventListener("load", function() {
     inner.innerHTML = tickers.map(function(t){ return '<span>'+t+'</span>'; }).join('');
   }
 
-  // ── SMOKE TEST: log all data point status ──
-  function smokeTest(label, sd) {
-    var checks = { ticker:sd._ticker, intel_items:sd._items, oil_brent:sd._brent, oil_wti:sd._wti,
-      war_day:sd._warday, ceasefire:sd._ceasefire, blockade:sd._blockade, hormuz:sd._hormuz,
-      vessels_trapped:sd._trapped, ais_count:sd._ais, sb_vessels:sd._sbvessels, sb_prices:sd._sbprices };
-    var pass=0, fail=[];
-    for(var k in checks){ if(checks[k]) pass++; else fail.push(k); }
-    var pct = Math.round(100*pass/Object.keys(checks).length);
-    console.groupCollapsed('[StraitTracker '+label+'] Smoke '+pct+'% ('+pass+'/'+Object.keys(checks).length+')'+( fail.length?' ❌ FAILING: '+fail.join(','):''));
-    for(var k in checks) console.log((checks[k]?'✅':'❌')+' '+k+':', checks[k]||'MISSING/NULL');
-    console.groupEnd();
-    // Flash status bar red if >2 failures
-    if(fail.length > 2){ var sb=document.getElementById('statusbar'); if(sb){ sb.style.borderTop='1px solid #ff3a3a'; setTimeout(function(){sb.style.borderTop='';},3000); } }
-  }
-
-  function updateStats(status, oil, sd) {
-    function set(id, val) { var el=document.getElementById(id); if(el&&val){ el.textContent=val; return val; } return null; }
-    if (status) {
-      sd._ceasefire = set('st-ceasefire', status.ceasefire_status);
-      sd._blockade  = set('st-blockade',  status.blockade_status);
-      sd._hormuz    = set('st-hormuz',    status.hormuz_status);
-      set('st-talks',   status.peace_talks);
-      set('st-supply',  status.supply_eliminated);
-      set('st-trapped', status.vessels_trapped);
-      // ── FIX: war day from live data ──
-      if (status.war_day) {
-        var wd1=document.getElementById('war-day'), wd2=document.getElementById('war-day-stat');
-        if(wd1) wd1.textContent = status.war_day;
-        if(wd2) wd2.textContent = status.war_day;
-        sd._warday = status.war_day;
-      }
-      // ── FIX: sb-vessels from vessels_trapped ──
-      if (status.vessels_trapped) {
-        var sbv=document.getElementById('sb-vessels');
-        if(sbv) sbv.textContent = 'Trapped: '+status.vessels_trapped;
-        sd._sbvessels = status.vessels_trapped;
-      }
-      sd._trapped = status.vessels_trapped || null;
+  function updateStats(status, oil, stats, warDay) {
+    function set(id, val) { var el=document.getElementById(id); if(el&&val!==undefined&&val!==null) { el.textContent=val; el.classList.remove('loading'); } }
+    if (warDay) {
+      set('war-day', warDay);
+      set('war-day-stat', warDay);
+      // Update countdown pill
+      var cd = document.getElementById('countdown');
+      if (cd) cd.textContent = warDay;
     }
-    // ── FIX: fallback to estimated values when oil API null ──
-    var brent=(oil&&oil.brent)?oil.brent:null, wti=(oil&&oil.wti)?oil.wti:null;
-    var sbp=document.getElementById('sb-prices');
-    if(brent&&wti){
-      if(sbp) sbp.textContent='Brent $'+brent+' | WTI $'+wti;
-      sd._sbprices='live'; sd._brent='$'+brent; sd._wti='$'+wti;
-    } else {
-      if(sbp) sbp.textContent='Brent ~$114 | WTI ~$107 [est]';
-      sd._sbprices='fallback'; sd._brent=null; sd._wti=null;
-      console.warn('[StraitTracker] Oil prices null from API — showing estimates');
+    if (status) {
+      // Update topbar threat badge
+      var tb = document.getElementById('threat-level');
+      if (tb) {
+        var lvl = (status.threat_level || 'HIGH').toUpperCase();
+        var emoji = {CRITICAL:'🔴',HIGH:'🟠',ELEVATED:'🟡',MODERATE:'🟢',LOW:'🟢'}[lvl] || '🔴';
+        tb.textContent = emoji + ' ' + lvl + ' — ' + (status.summary_one_line || '').slice(0,60);
+        tb.className = 'threat-badge badge-' + lvl.toLowerCase();
+      }
+      // Stat rows — map new field names + old field names
+      set('st-ceasefire', status.ceasefire || status.ceasefire_status);
+      set('st-blockade', status.blockade || status.blockade_status);
+      set('st-hormuz', status.hormuz || status.hormuz_status);
+      set('st-talks', status.talks || status.peace_talks);
+      set('st-supply', status.supply_eliminated);
+      set('st-trapped', (stats && stats.vessels_trapped) || status.vessels_trapped);
+    }
+    if (stats) {
+      set('st-trapped', stats.vessels_trapped);
+      if (stats.seafarers_trapped) {
+        var srEl = document.getElementById('st-seafarers');
+        if (!srEl) {
+          // Insert new stat row if doesn't exist
+          var lastRow = document.querySelector('#left-panel .stat-row:last-of-type');
+          if (lastRow) {
+            var newRow = document.createElement('div');
+            newRow.className = 'stat-row';
+            newRow.innerHTML = '<span class="stat-label">Seafarers Affected</span><span class="stat-val orange" id="st-seafarers">'+stats.seafarers_trapped+'</span>';
+            lastRow.parentNode.insertBefore(newRow, lastRow.nextSibling);
+          }
+        } else { srEl.textContent = stats.seafarers_trapped; }
+      }
+    }
+    if (oil) {
+      // Update price pills
+      function setPrice(id, chgId, val, chg) {
+        var el=document.getElementById(id), cel=document.getElementById(chgId);
+        if(el&&val) el.textContent='$'+parseFloat(val).toFixed(2);
+        if(cel&&chg) { cel.textContent=chg; cel.className='chg '+(chg.startsWith('+')?'chg-up':(chg.startsWith('-')?'chg-dn':'chg-flat')); }
+      }
+      applyPrices({ brent: oil.brent, brent_change: oil.brent_change, wti: oil.wti, wti_change: oil.wti_change });
+      // Status bar prices
+      var sb=document.getElementById('sb-prices');
+      if(sb&&oil.brent) sb.textContent='Brent $'+parseFloat(oil.brent).toFixed(2)+' | WTI $'+(oil.wti?parseFloat(oil.wti).toFixed(2):'--');
     }
   }
 
@@ -725,109 +903,93 @@ window.addEventListener("load", function() {
     }
   }
 
-  function loadLiveIntel() {
-    var sd = {};
-    // ── FETCH 1: /news/latest (items + status + oil + vessels) ──
-    var p1 = fetch(INTEL_API + '/news/latest', { headers: {'User-Agent': 'StraitTracker/57'} })
-      .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-      .then(function(d) {
-        if (d.items && d.items.length) { renderIntelCards(d.items); sd._items=d.items.length+' items'; }
-        else { sd._items=null; console.warn('[StraitTracker] /news/latest: 0 items'); }
-        updateStats(d.status, d.oil, sd);
-        updateIntelTimestamp(d.updated);
-        if (d.vessels && d.vessels.ais_live !== undefined) {
-          var ae=document.getElementById('ais-count');
-          if(ae){ ae.textContent=d.vessels.ais_live||'0'; sd._ais=d.vessels.ais_live; }
-        }
-      })
-      .catch(function(e){ sd._items=null; console.error('[StraitTracker] /news/latest FAILED:',e.message); });
-
-    // ── FETCH 2: /ticker (separate — NOT included in /news/latest) ──
-    var p2 = fetch(INTEL_API + '/ticker', { headers: {'User-Agent': 'StraitTracker/57'} })
-      .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-      .then(function(d) {
-        if (d.ticker && d.ticker.length) { renderTicker(d.ticker); sd._ticker=d.ticker.length+' items'; }
-        else { sd._ticker=null; console.warn('[StraitTracker] /ticker: empty'); }
-      })
-      .catch(function(e){ sd._ticker=null; console.error('[StraitTracker] /ticker FAILED:',e.message); });
-
-    // ── FETCH 3: /status (ais count + war_day backup + ais timestamp) ──
-    var p3 = fetch(INTEL_API + '/status', { headers: {'User-Agent': 'StraitTracker/57'} })
-      .then(function(r){ return r.json(); })
-      .then(function(d) {
-        var ae=document.getElementById('ais-count');
-        if(ae && d.ais_count!==undefined){ ae.textContent=d.ais_count; sd._ais=d.ais_count; }
-        if(d.ais_updated){
-          var dt=new Date(d.ais_updated), mins=Math.round((Date.now()-dt)/60000);
-          var al=document.querySelector('#ais-badge [style*="64748b"]');
-          if(al) al.textContent='vessels · '+(mins<2?'live':mins+'min ago');
-        }
-        // backup war_day update if /news/latest missed it
-        if(d.war_day){
-          var wd1=document.getElementById('war-day'), wd2=document.getElementById('war-day-stat');
-          if(wd1&&(wd1.textContent==='65'||!sd._warday)) wd1.textContent=d.war_day;
-          if(wd2&&(wd2.textContent==='65'||!sd._warday)) wd2.textContent=d.war_day;
-          sd._warday=sd._warday||d.war_day;
-        }
-      })
-      .catch(function(e){ console.error('[StraitTracker] /status FAILED:',e.message); });
-
-    // ── FETCH 4: /oil-live (Alpha Vantage primary, static fallback) ──
-    var p4 = fetch(INTEL_API + '/oil-live', { headers: {'User-Agent': 'StraitTracker/57'} })
-      .then(function(r){ return r.json(); })
-      .then(function(d) {
-        var oil = d.oil || {};
-        var brent = oil.brent, wti = oil.wti;
-        if (brent) {
-          var bEl  = document.getElementById('brent-price');
-          var wEl  = document.getElementById('wti-price');
-          var bChg = document.getElementById('brent-chg');
-          var wChg = document.getElementById('wti-chg');
-          var sbp  = document.getElementById('sb-prices');
-          var note = (d.source === 'static_fallback') ? ' [est]' : '';
-          if (bEl)  bEl.textContent  = '$' + brent.toFixed(2) + note;
-          if (wEl)  wEl.textContent  = '$' + (wti ? wti.toFixed(2) : '?') + note;
-          if (sbp)  sbp.textContent  = 'Brent $' + brent.toFixed(2) + note + ' | WTI $' + (wti ? wti.toFixed(2) : '?') + note;
-          if (bChg && oil.brent_prev) {
-            var bc = (brent - oil.brent_prev).toFixed(2);
-            bChg.textContent = (bc > 0 ? '+' : '') + bc;
-            bChg.style.color = bc > 0 ? '#4ade80' : '#f87171';
-          }
-          if (wChg && oil.wti_prev && wti) {
-            var wc = (wti - oil.wti_prev).toFixed(2);
-            wChg.textContent = (wc > 0 ? '+' : '') + wc;
-            wChg.style.color = wc > 0 ? '#4ade80' : '#f87171';
-          }
-          sd._brent    = '$' + brent.toFixed(2) + note;
-          sd._wti      = '$' + (wti ? wti.toFixed(2) : '?') + note;
-          sd._sbprices = 'Brent $' + brent.toFixed(2) + note + ' | WTI $' + (wti ? wti.toFixed(2) : '?') + note;
-          console.log('[StraitTracker] Oil prices OK — source:', d.source, '| Brent:', brent, 'WTI:', wti);
-        } else {
-          console.warn('[StraitTracker] /oil-live returned no prices');
-        }
-      })
-      .catch(function(e){ console.error('[StraitTracker] /oil-live FAILED:', e.message); });
-
-    // ── Smoke test after all settle ──
-    Promise.allSettled([p1, p2, p3, p4]).then(function(){ smokeTest('v57', sd); });
+  // ── OFFLINE CACHE ──
+  var CACHE_KEY = 'strait_intel_v3';
+  function loadCachedIntel() {
+    try {
+      var c = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+      if (c) { renderAll(c); console.log('[StraitTracker] Rendered from localStorage cache'); }
+    } catch(e) {}
   }
 
-  // Load immediately + auto-refresh every 15 min
+  function renderAll(d) {
+    // Events / intel cards
+    if (d.events && d.events.length) renderIntelCards(d.events);
+    else if (d.items && d.items.length) renderIntelCards(d.items);
+    // Ticker
+    if (d.ticker && d.ticker.length) renderTicker(d.ticker);
+    // Stats / status
+    updateStats(d.status, d.oil, d.stats, d.war_day);
+    // Operation Freedom banner
+    if (d.operation) updateOpBanner(d.operation);
+    // Freshness badge
+    if (d.updated) updateFreshnessBadge(d.updated);
+    // Sitrep date
+    var sd = document.getElementById('sitrep-date');
+    if (sd && d.updated) {
+      var dt = new Date(d.updated);
+      sd.textContent = dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toUpperCase() + ' ' + dt.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',timeZone:'America/New_York'}) + ' ET';
+    }
+  }
+
+  function loadLiveIntel() {
+    fetch(INTEL_API + '/intel')
+      .then(function(r){ return r.json(); })
+      .then(function(d) {
+        renderAll(d);
+        // Save to localStorage
+        try { localStorage.setItem(CACHE_KEY, JSON.stringify(d)); } catch(e) {}
+        // Clear stale warning
+        var sw = document.getElementById('stale-warning');
+        if (sw) sw.style.display = 'none';
+      })
+      .catch(function(e){
+        console.warn('[StraitTracker] Intel fetch error:', e);
+        // Show stale warning
+        var sw = document.getElementById('stale-warning');
+        if (sw) sw.style.display = 'block';
+        var sa = document.getElementById('stale-age');
+        if (sa) sa.textContent = 'fetch failed — using cached data';
+      });
+  }
+
+  function updateOpBanner(op) {
+    var banner = document.getElementById('op-banner');
+    var statusEl = document.getElementById('op-status-text');
+    var detailEl = document.getElementById('op-detail-text');
+    if (!banner) return;
+    var colorMap = { 'active':'active', 'paused':'paused', 'suspended':'suspended', 'ended':'ended', 'red':'active', 'orange':'paused', 'yellow':'paused', 'green':'ended' };
+    var cls = colorMap[(op.color || op.status || '').toLowerCase()] || 'paused';
+    banner.className = cls;
+    if (statusEl) statusEl.textContent = ' · ' + (op.status || '');
+    if (detailEl) detailEl.textContent = op.detail || '';
+  }
+
+  function updateFreshnessBadge(updated) {
+    var el = document.getElementById('freshness-badge');
+    if (!el || !updated) return;
+    var ageMs = Date.now() - new Date(updated).getTime();
+    var ageMin = Math.round(ageMs / 60000);
+    if (ageMin < 2) { el.textContent = '⟳ LIVE'; el.className = 'fresh'; }
+    else if (ageMin < 60) { el.textContent = '⟳ ' + ageMin + 'm ago'; el.className = 'fresh'; }
+    else if (ageMin < 120) { el.textContent = '⟳ ' + Math.round(ageMin/60) + 'h ago'; el.className = ''; }
+    else { el.textContent = '⚠ ' + Math.round(ageMin/60) + 'h old'; el.className = 'stale'; }
+  }
+
+  // Load cache immediately (instant render) then fetch live
+  loadCachedIntel();
   loadLiveIntel();
   setInterval(loadLiveIntel, 15 * 60 * 1000);
+  // Update freshness badge every minute
+  setInterval(function(){
+    try {
+      var c = JSON.parse(localStorage.getItem('strait_intel_v3') || 'null');
+      if (c && c.updated) updateFreshnessBadge(c.updated);
+    } catch(e) {}
+  }, 60000);
 
 
-  const EVENTS = [
-    { color:'#ff3a3a', title:'🚨 IRGC Seizes MSC Francesca + Epaminondas', time:'Apr 22, 2026 — TODAY', body:'3 ships fired on in Hormuz. 2 seized + brought to shore. Container ship hit at 02:55 UTC, heavy bridge damage.', src:'Reuters / UKMTO' },
-    { color:'#a855f7', title:'🛢 Hero II + Hedy VLCCs Go Dark (4M bbls)', time:'Apr 22, 2026 — TODAY', body:'Two Iranian supertankers enter Arabian Sea with AIS off. Satellite confirms. US pledge to intercept anywhere.', src:'Vortexa / Bloomberg' },
-    { color:'#00b4ff', title:'🇺🇸 US Intercepts 3 Iranian Tankers — Asia', time:'Apr 22, 2026 — TODAY', body:'US military redirecting Iranian-flagged tankers in Asian waters. Enforcement zone now Indo-Pacific-wide.', src:'Reuters Exclusive' },
-    { color:'#00e676', title:'🕊 Ceasefire Extended Indefinitely', time:'Apr 22, 2026 — TODAY', body:'Trump: ceasefire holds indefinitely. Blockade stays. Iran has "yet to decide" on talks.', src:'AP / CNBC' },
-    { color:'#ff7a00', title:'⚠ 800 Vessels Trapped in Persian Gulf', time:'May 1, 2026', body:'IMO working evacuation plan. Contingent on de-escalation. Asian shipowners may move first.', src:'IMO / gCaptain' },
-    { color:'#ff3a3a', title:'💣 1 Billion Barrels of Supply Eliminated', time:'Apr 22, 2026', body:'Top traders estimate oil supply loss since war started. Shipping ~100+ vessels/day pre-war → near zero now.', src:'Bloomberg' },
-    { color:'#ff3a3a', title:'🚢 M/V Touska Seized by US Marines', time:'Apr 19-20, 2026', body:'USS Spruance disables engine room. Marines rappel from USS Tripoli. Today\u2019s IRGC response follows.', src:'CENTCOM' },
-    { color:'#00b4ff', title:'✈ Iran Reopens Major Airports', time:'Apr 21, 2026', body:'Imam Khomeini + Mehrabad airports reopen after weeks of war closures.', src:'Al Jazeera' },
-    { color:'#00c896', title:'💣 US Sea Drones — Mine Clearance Active', time:'Apr 21, 2026', body:'Autonomous USVs deployed for Hormuz mine sweeping.', src:'J-Post' },
-  ];
+  const EVENTS = []; // Populated from /intel API
   
   // ═══════════════════════════════════════════════════════════════
   // MAP INIT — wrapped in function, called via setTimeout to ensure
@@ -967,4 +1129,3 @@ window.addEventListener("load", function() {
 </body>
 </html>`;
 }
-

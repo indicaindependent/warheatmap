@@ -33,6 +33,31 @@
 
 ---
 
+
+## 📋 Changelog
+
+### v6.1 — May 9, 2026 *(Latest)*
+- 🔧 **CORS fix** — removed `User-Agent` from browser fetch; added `Access-Control-Allow-Headers: *` to strait-news-worker
+- 🔧 **Fixed `updateWarDay` / `forceRefresh` / `refreshPrices`** — functions were called at boot but never defined (caused full UI freeze)
+- 💰 **Daily price cache** — Brent/WTI/BTC now ingested once per day via `localStorage` TTL (24h), not on every page visit
+- ⚡ **`applyPrices()`** — unified price rendering function, eliminates duplicate DOM updates
+- 🔄 **`autoRefresh()`** — 5-min background refresh respects daily price cache
+- ✅ **NOW button** — `forceRefresh()` clears price cache, re-fetches all live data, flashes UI confirmation
+
+### v6.0 — May 7, 2026
+- 🗺️ Full SVG map rebuild — no external Leaflet dependency (WARP-safe)
+- 📰 Live intel brief panel — auto-populates from strait-news-worker
+- 🎯 IRGCN asset positions + US Navy carrier group overlays
+- ⚓ Mine field / exclusion zone layers
+- 📅 War Day counter (since Feb 27, 2026)
+- 🔴 Threat level badge — pulls from intel API status object
+
+### strait-news-worker v3.1 — May 9, 2026
+- 🔧 **CORS fix** — `Access-Control-Allow-Headers: *` added to all responses + preflight
+- ✅ `/oil-live` endpoint confirmed operational
+- ✅ All secrets restored: NEWSAPI, ANTHROPIC, GEMINI, TELEGRAM, AISSTREAM, ALPHA_VANTAGE, FINNHUB
+
+
 ## 🔍 What Is WarHeatMap?
 
 **WarHeatMap** is a free, open-source live conflict intelligence platform that aggregates geopolitical flashpoints, overlays them on an interactive world map, and auto-posts intelligence threads to **Bluesky** via the AT Protocol — all running at the edge on **Cloudflare Workers**.

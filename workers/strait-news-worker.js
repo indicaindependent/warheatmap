@@ -11,7 +11,7 @@ export default {
     // ── SMOKE TEST ──
     if (path === '/smoke-test' && req.method === 'POST') {
       const _auth = req.headers.get('Authorization') || '';
-      if (_auth !== 'Bearer smoke-9f8e7d6c5b4a3f2e1d0c') return Response.json({ ok: false, error: 'unauthorized' }, { status: 401 });
+      if (_auth !== (env.SMOKE_TEST_TOKEN ? 'Bearer ' + env.SMOKE_TEST_TOKEN : 'Bearer __disabled__')) return Response.json({ ok: false, error: 'unauthorized' }, { status: 401 });
       return Response.json({ ok: true, worker: 'strait-news-worker', version: '3.0', updated: new Date().toISOString() });
     }
 

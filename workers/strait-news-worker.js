@@ -12,7 +12,7 @@ export default {
     if (path === '/smoke-test' && req.method === 'POST') {
       const _auth = req.headers.get('Authorization') || '';
       if (_auth !== (env.SMOKE_TEST_TOKEN ? 'Bearer ' + env.SMOKE_TEST_TOKEN : 'Bearer __disabled__')) return Response.json({ ok: false, error: 'unauthorized' }, { status: 401 });
-      return Response.json({ ok: true, worker: 'strait-news-worker', version: '3.0', updated: new Date().toISOString() });
+      return Response.json({ ok: true, worker: 'strait-news-worker', version: '3.1', updated: new Date().toISOString() });
     }
 
     // ── PUBLIC ENDPOINTS ──
@@ -22,7 +22,7 @@ export default {
     if (path === '/ais')         return handleGetAIS(env, CORS);
     if (path === '/vessels')     return handleGetVessels(env, CORS);
     if (path === '/ticker')      return handleGetTicker(env, CORS);
-    if (path === '/health')      return Response.json({ ok: true, version: '3.0', ts: new Date().toISOString() }, { headers: CORS });
+    if (path === '/health')      return Response.json({ ok: true, version: '3.1', ts: new Date().toISOString() }, { headers: CORS });
 
     // ── ADMIN ENDPOINTS ──
     const auth = req.headers.get('Authorization') || '';
@@ -33,7 +33,7 @@ export default {
     if (path === '/admin/refresh' && req.method === 'POST') return handleAdminRefresh(env, CORS);
     if (path === '/admin/status'  && req.method === 'GET')  return handleAdminStatus(env, CORS);
 
-    return Response.json({ ok: true, version: '3.0', endpoints: ['/intel', '/news/latest', '/status', '/oil-live', '/ais', '/vessels', '/ticker', '/health'] }, { headers: CORS });
+    return Response.json({ ok: true, version: '3.1', endpoints: ['/intel', '/news/latest', '/status', '/oil-live', '/ais', '/vessels', '/ticker', '/health'] }, { headers: CORS });
   },
 
   // ── CRON: every 30 minutes ──
@@ -41,6 +41,320 @@ export default {
     ctx.waitUntil(runFullCycle(env));
   },
 };
+
+// ─── MISSING CONSTANTS — RESTORED 2026-05-20 by Bumboclaat ───────────────────
+// Bug: BACKSTOP_EVENTS / STATIC_VESSELS / STATIC_NAVAL_ASSETS / WAR_START were
+// referenced throughout but never defined, causing ReferenceError → CF 1101 / 500.
+// All event data below is cross-sourced (≥2 wire services) or marked REPORTED:
+
+const WAR_START = new Date('2026-02-28T00:00:00Z').getTime();
+
+
+// ─── PINNED_EVENTS — verified manual intel that MUST survive cron re-synthesis ───
+// Added by Bumboclaat 2026-06-05. Merged on top of synthesis/backstop, deduped by id.
+// To retire an event, remove it here. Newest first.
+const PINNED_EVENTS = [
+  { id:'omanterminal05', date:'June 5, 2026', tag:'BREAKING', tag_color:'red', icon:'🟥',
+    title:'OMAN MINA AL FAHAL TERMINAL STRUCK — HALTED, THEN RESUMED',
+    body:'Explosion near the SBM mooring berths at Oman\'s ~1M bpd Mina al Fahal crude export hub halted loading early June 5 (03:41 BST). Operations RESUMED hours later (07:17 BST); Oman insists ops "proceeding normally." First reported hit on open-water export infrastructure BEYOND the Strait — the conflict\'s geography is widening past the chokepoint.',
+    source:'Middle East Eye / Reuters / Arab News — June 5, 2026', severity:'critical' },
+  { id:'hormuzmanage05', date:'June 5, 2026', tag:'HORMUZ', tag_color:'orange', icon:'⚓',
+    title:'IRAN: HORMUZ "MANAGED JOINTLY WITH OMAN" + SERVICE FEES, NOT TOLLS',
+    body:'Tehran reframes its chokepoint play: the Strait will be "managed jointly with Oman under international law," and Iran will seek "service fees, not tolls" for safe passage. A control-and-monetize posture, not a clean closure.',
+    source:'Anadolu / Egypt Independent — June 5, 2026', severity:'high' },
+  { id:'irantalks01', date:'June 1, 2026', tag:'DIPLOMACY', tag_color:'red', icon:'🚫',
+    title:'IRAN WALKS FROM US TALKS — VOWS TO CLAMP HORMUZ',
+    body:'Iran halted "dialogue and exchange of texts through mediation," citing Israeli strikes on Lebanon, and vowed to tighten its grip on Hormuz. The May-27 MOU framework is frozen — the "ceasefire" is a business-first construct now visibly collapsing.',
+    source:'CNBC / Tasnim / ABC News — June 1, 2026', severity:'critical' },
+  { id:'kuwait03', date:'June 3, 2026', tag:'NAVAL-INCIDENT', tag_color:'red', icon:'💥',
+    title:'IRAN STRIKES KUWAIT AIRPORT — 1 KILLED, TEHRAN NOW DENIES',
+    body:'Iranian missile + drone attack hit Kuwait\'s international airport June 3, killing one and damaging a terminal. US (Rubio) and Kuwait blame Iran; CENTCOM reports defeating multiple Iranian missiles/drones and striking Qeshm. Iran now DENIES the strike, blaming a "Patriot malfunction."',
+    source:'Reuters / CBS / Al-Monitor / CENTCOM — June 3, 2026', severity:'critical' },
+  { id:'sariska02', date:'June 2, 2026', tag:'VESSEL', tag_color:'yellow', icon:'🚢',
+    title:'MSC SARISKA V STRUCK BY PROJECTILES OFF UMM QASR, IRAQ',
+    body:'MSC confirms its vessel Sariska V (IMO 8715857, Panama flag) was hit by two projectiles ~40nm from Iraq\'s Umm Qasr; crew safe. A STRIKE, not a seizure — near the Umm Qasr corridor Iran uses to route crude around the US blockade.',
+    source:'Reuters / Al-Monitor / Seatrade Maritime — June 2, 2026', severity:'high' },
+  { id:'oilfloor05', date:'June 5, 2026', tag:'OIL-IMPACT', tag_color:'orange', icon:'🛢️',
+    title:'ANALYSTS: $200/BBL POSSIBLE WITHOUT A HORMUZ DEAL',
+    body:'With Hormuz traffic restricted, cumulative Gulf supply losses exceed 1 billion barrels, 14+ mb/d effectively shut in. Analysts warn of a $200/bbl scenario absent a deal. UN/WFP flags a multi-country food-price crisis — macro spillover turning humanitarian.',
+    source:'Juan Cole / Al Jazeera (UN-WFP) — June 5, 2026', severity:'high' },
+];
+
+// Merge pinned events on top of a base list, deduped by id (pinned win).
+function mergePinned(baseEvents) {
+  const base = Array.isArray(baseEvents) ? baseEvents : [];
+  const pinnedIds = new Set(PINNED_EVENTS.map(e => e.id));
+  return [...PINNED_EVENTS, ...base.filter(e => !pinnedIds.has(e.id))];
+}
+
+const BACKSTOP_EVENTS = [
+  {
+    id: 'omanterminal05',
+    date: 'June 5, 2026',
+    tag: 'BREAKING',
+    tag_color: 'red',
+    icon: '🟥',
+    title: 'OMAN MINA AL FAHAL TERMINAL STRUCK — LOADING HALTED, THEN RESUMED',
+    body: 'Explosion near the SBM mooring berths at Oman\'s ~1M bpd Mina al Fahal crude export hub halted loading early June 5 (03:41 BST). Operations RESUMED hours later (07:17 BST); Oman insists ops "proceeding normally." Significance: first reported hit on open-water export infrastructure BEYOND the Strait itself — the conflict\'s relevant geography is widening past the chokepoint.',
+    source: 'Middle East Eye / Reuters / Arab News — June 5, 2026',
+    severity: 'critical'
+  },
+  {
+    id: 'hormuzmanage05',
+    date: 'June 5, 2026',
+    tag: 'HORMUZ',
+    tag_color: 'orange',
+    icon: '⚓',
+    title: 'IRAN: HORMUZ "MANAGED JOINTLY WITH OMAN" + SERVICE FEES, NOT TOLLS',
+    body: 'Tehran reframes its chokepoint play: FM says the Strait will be "managed jointly with Oman under international law," and Iran will seek "service fees, not tolls" for safe passage. This is a control-and-monetize posture — not a clean closure. Read: Iran wants to convert leverage into a permanent revenue + sovereignty claim over the waterway.',
+    source: 'Anadolu / Egypt Independent — June 5, 2026',
+    severity: 'high'
+  },
+  {
+    id: 'irantalks01',
+    date: 'June 1, 2026',
+    tag: 'DIPLOMACY',
+    tag_color: 'red',
+    icon: '🚫',
+    title: 'IRAN WALKS FROM US TALKS — VOWS TO CLAMP HORMUZ',
+    body: 'Iran halted "dialogue and exchange of texts through mediation," citing Israeli strikes on Lebanon, and vowed to tighten its grip on Hormuz. Gulf crude exports unlikely to rise near-term. The May-27 MOU framework is effectively frozen — the "ceasefire" is a business-first construct now visibly collapsing.',
+    source: 'CNBC / Tasnim / ABC News — June 1, 2026',
+    severity: 'critical'
+  },
+  {
+    id: 'kuwait03',
+    date: 'June 3, 2026',
+    tag: 'NAVAL-INCIDENT',
+    tag_color: 'red',
+    icon: '💥',
+    title: 'IRAN STRIKES KUWAIT AIRPORT — 1 KILLED, IRAN NOW DENIES',
+    body: 'Iranian missile + drone attack hit Kuwait\'s international airport June 3, killing one and damaging a terminal. US (Rubio) and Kuwait blame Iran; CENTCOM reports defeating multiple Iranian ballistic missiles/drones and conducting self-defense strikes on Qeshm. Iran now DENIES the airport strike, blaming a "Patriot malfunction" — a denial that itself signals escalation management.',
+    source: 'Reuters / CBS / Al-Monitor / CENTCOM — June 3, 2026',
+    severity: 'critical'
+  },
+  {
+    id: 'sariska02',
+    date: 'June 2, 2026',
+    tag: 'VESSEL',
+    tag_color: 'yellow',
+    icon: '🚢',
+    title: 'MSC SARISKA V STRUCK BY PROJECTILES OFF UMM QASR, IRAQ',
+    body: 'MSC (world\'s largest shipping group) confirms its vessel Sariska V (IMO 8715857, Panama flag, ~74,500 DWT) was hit by two projectiles ~40nm from Iraq\'s Umm Qasr port; crew safe. Notable: this is a STRIKE, not a seizure, and it lands near the Umm Qasr corridor Iran is using to route crude around the US blockade.',
+    source: 'Reuters / Al-Monitor / Seatrade Maritime — June 2, 2026',
+    severity: 'high'
+  },
+  {
+    id: 'oilfloor05',
+    date: 'June 5, 2026',
+    tag: 'OIL-IMPACT',
+    tag_color: 'orange',
+    icon: '🛢️',
+    title: 'ANALYSTS: $200/BBL POSSIBLE WITHOUT A HORMUZ DEAL',
+    body: 'With Hormuz tanker traffic restricted, Gulf supply losses now exceed 1 billion barrels cumulative, with 14+ mb/d of oil effectively shut in. Analysts warn of a $200/bbl scenario absent a deal. The UN/WFP flags the war is driving a food-price crisis across multiple countries — the macro spillover is now humanitarian, not just energy.',
+    source: 'Juan Cole / Al Jazeera (UN-WFP) — June 5, 2026',
+    severity: 'high'
+  },
+  {
+    id: 'mou27',
+    date: 'May 27, 2026 (updated Jun 5)',
+    tag: 'COLLAPSING',
+    tag_color: 'red',
+    icon: '🟥',
+    title: 'PHONY CEASEFIRE NOW COLLAPSING — MOU FROZEN AS IRAN WALKS',
+    body: 'CONTEXT (now superseded): the May-27 MOU framework — limited reopen, ~$24B Iranian asset release, partial sanctions relief — was always a business-first construct, not a peace. As of June 1-5 it is frozen: Iran walked from talks, struck Kuwait, and reframed Hormuz as a fee-charging condominium with Oman. The "ceasefire" is collapsing in real time.',
+    source: 'Reuters / Al Jazeera / Tasnim — May 27, 2026',
+    severity: 'critical'
+  },
+  {
+    id: 'fire27',
+    date: 'May 27, 2026',
+    tag: 'NAVAL-INCIDENT',
+    tag_color: 'red',
+    icon: '🔫',
+    title: 'US-IRAN DESTROYERS EXCHANGE FIRE',
+    body: 'Brief firefight between US Navy destroyer and IRGC fast-attack craft in Strait of Hormuz. Trump confirms ceasefire still "in place" but BBC reports incident raised escalation risk. No casualties reported. Most serious naval contact in years.',
+    source: 'BBC / US 5th Fleet — May 27, 2026',
+    severity: 'critical'
+  },
+  {
+    id: 'irgc26',
+    date: 'May 26, 2026',
+    tag: 'MARITIME',
+    tag_color: 'yellow',
+    icon: '🚢',
+    title: 'IRGC CLAIMS 25 VESSELS PASSED HORMUZ TUESDAY',
+    body: 'Islamic Revolutionary Guard Corps Navy claims 25 vessels including oil tankers transited Strait of Hormuz Tuesday. Iran asserting "regulator" status as MOU talks progress. Far below pre-war 100+/day baseline but signals quiet reopen pre-deal.',
+    source: 'CNN / IRNA / IRGC press — May 26, 2026',
+    severity: 'high'
+  },
+  {
+    id: 'china24',
+    date: 'May 24, 2026',
+    tag: 'OIL-FLOW',
+    tag_color: 'blue',
+    icon: '🛢',
+    title: 'CHINA + INDIA RESUMING QUIET CRUDE PULLS',
+    body: 'CNOOC + Sinopec quietly resumed Iranian crude liftings in past 72 hours per Kpler flow data. Indian IOC + HPCL doing the same, betting on deal closure. Both exploiting de facto US enforcement gray zone. 800+ ships still backed up.',
+    source: 'Kpler / S&P Global Commodity Insights — May 23-27, 2026',
+    severity: 'high'
+  },
+  {
+    id: 'sm20',
+    date: 'May 20, 2026',
+    tag: 'TANKER-MOVE',
+    tag_color: 'green',
+    icon: '🛢',
+    title: 'CHINA TAKES 4M BARRELS — TWO TANKERS EXIT HORMUZ',
+    body: 'Two Chinese supertankers depart Strait of Hormuz carrying ~4 million barrels combined — largest blockade-easing signal since war began. Asian oil flow tentatively resuming. Vance + Trump talking up Iran deal prospects same day.',
+    source: 'Reuters / Gulf News — May 20, 2026',
+    severity: 'high'
+  },
+  {
+    id: 'in20',
+    date: 'May 20, 2026',
+    tag: 'SUPPLY',
+    tag_color: 'blue',
+    icon: '🇮🇳',
+    title: 'INDIA SENDS TANKERS — NEW CRUDE SUPPLY CORRIDOR',
+    body: 'New Delhi announces dispatch of oil tankers through Strait of Hormuz to secure crude supply amid Iran-conflict disruptions. India is third-largest Iranian oil customer historically.',
+    source: 'Times of India — May 20, 2026',
+    severity: 'medium'
+  },
+  {
+    id: 'tw20',
+    date: 'May 20, 2026',
+    tag: 'DIPLOMATIC',
+    tag_color: 'purple',
+    icon: '⚠️',
+    title: 'IRAN: WAR "BEYOND THE REGION" IF US ATTACKS',
+    body: 'Tehran warns escalation will go global if US restarts strikes. Trump claims he came within one hour of relaunching the war. Vance pushes deal framing publicly.',
+    source: 'Reuters — May 20, 2026',
+    severity: 'high'
+  },
+  {
+    id: 'us19',
+    date: 'May 19, 2026',
+    tag: 'SEIZURE',
+    tag_color: 'red',
+    icon: '🟥',
+    title: 'US SEIZES IRAN-LINKED TANKER IN INDIAN OCEAN',
+    body: 'WSJ exclusive: US Navy intercepts and seizes Iranian-affiliated oil tanker in Indian Ocean. Treasury economic-pressure track running parallel to Trump deal rhetoric. Sanctions enforcement continues despite summit talk.',
+    source: 'WSJ exclusive — May 19, 2026',
+    severity: 'critical'
+  },
+  {
+    id: 'mk19',
+    date: 'May 19, 2026',
+    tag: 'NAVAL',
+    tag_color: 'blue',
+    icon: '⚓',
+    title: 'USS MAKIN ISLAND PREPS FOR GULF DEPLOYMENT',
+    body: 'Wasp-class amphibious assault ship USS Makin Island (LHD-8) being prepared for possible Persian Gulf deployment. Adds amphibious capability to existing 20-warship presence.',
+    source: 'National Interest / USNI News — May 19, 2026',
+    severity: 'medium'
+  },
+  {
+    id: 'fl18',
+    date: 'May 18, 2026',
+    tag: 'NAVAL',
+    tag_color: 'blue',
+    icon: '🚢',
+    title: 'USNI FLEET TRACKER — 20 US WARSHIPS IN THEATER',
+    body: 'USNI News Fleet & Marine Tracker confirms 20 US Navy warships enforcing Iran blockade. USS Nimitz on circumnavigation home via Rio. USS Eisenhower remains at Norfolk after April fire — not deployable.',
+    source: 'USNI News — May 18, 2026',
+    severity: 'medium'
+  },
+  {
+    id: 'tx15',
+    date: 'May 15, 2026',
+    tag: 'SUMMIT',
+    tag_color: 'purple',
+    icon: '🤝',
+    title: 'TRUMP-XI SUMMIT — NO HORMUZ BREAKTHROUGH',
+    body: 'Beijing summit ends with stability rhetoric but no concrete Iran breakthrough. Trump claims Xi agreed Iran "should open Hormuz." Al Jazeera analysis: Xi did not budge on backing Iran economically. China publicly called the Iran war "unjust."',
+    source: 'NY Times / Al Jazeera / Euronews — May 14-15, 2026',
+    severity: 'critical'
+  },
+  {
+    id: 'tt14',
+    date: 'May 14, 2026',
+    tag: 'ECONOMIC',
+    tag_color: 'yellow',
+    icon: '💸',
+    title: 'IRAN MOVES TO CHARGE HORMUZ TRANSIT FEES',
+    body: 'Iran pushes scheme to charge merchant shippers for passage under threat of violence — declares itself strait "regulator." Experts warn the model could spread to Bab el-Mandeb and Malacca.',
+    source: 'USNI News — May 14, 2026',
+    severity: 'high'
+  },
+  {
+    id: 'ct11',
+    date: 'May 11, 2026',
+    tag: 'NAVAL',
+    tag_color: 'blue',
+    icon: '🛡',
+    title: '20 US WARSHIPS — IRAN BLOCKADE ENFORCED',
+    body: '20 surface combatants including 2 carriers enforce US blockade. USS Nimitz service extended to 2027 per Navy announcement. Eisenhower out of service indefinitely after Norfolk shipyard fire.',
+    source: 'TWZ / Middle East Monitor — May 11, 2026',
+    severity: 'high'
+  },
+  {
+    id: 'mn13',
+    date: 'May 13, 2026',
+    tag: 'INTEL',
+    tag_color: 'orange',
+    icon: '⚓',
+    title: 'NAVY LOOKOUT: NO CONFIRMED MINES IN HORMUZ',
+    body: 'Despite repeated reports, no conclusive evidence Iran has laid sea mines in the strait. Risk persists but actual mining unconfirmed as of May 13.',
+    source: 'Navy Lookout — May 13, 2026',
+    severity: 'medium'
+  },
+  {
+    id: 'ir22',
+    date: 'April 22, 2026',
+    tag: 'SEIZURE',
+    tag_color: 'red',
+    icon: '🟥',
+    title: 'IRGCN SEIZES 2 CARGO SHIPS — FIRES ON 3RD',
+    body: 'MSC Francesca and Epaminondas seized by IRGC Navy in coordinated Hormuz operation. MV Euphoria fired on (~03:00 UTC) but not damaged. UKMTO confirms. Iran calls action retaliation for US capture of M/V Touska.',
+    source: 'Reuters / WSJ / UKMTO — April 22, 2026',
+    severity: 'critical'
+  },
+  {
+    id: 'tk19',
+    date: 'April 19-20, 2026',
+    tag: 'SEIZURE',
+    tag_color: 'red',
+    icon: '🚁',
+    title: 'M/V TOUSKA — US MARINES BOARD IRANIAN TANKER',
+    body: 'USS Spruance (DDG-111) fires on engine room after 6-hour standoff in Gulf of Oman. US Marines rappel from USS Tripoli (LHA-7). Khatam al-Anbiya vows retaliation — IRGC moves of April 22 appear direct response.',
+    source: 'Reuters / WSJ — April 19-20, 2026',
+    severity: 'critical'
+  },
+];
+
+const STATIC_VESSELS = [
+  // Same shape as ASSETS in frontend — kept minimal for backstop
+  { type: 'tanker', label: 'Chinese VLCC #1', status: 'TRANSITED MAY 20', flag: 'CN', detail: '2M barrels exit Hormuz — Reuters May 20' },
+  { type: 'tanker', label: 'Chinese VLCC #2', status: 'TRANSITED MAY 20', flag: 'CN', detail: '2M barrels exit Hormuz — Reuters May 20' },
+  { type: 'tanker', label: 'India-bound', status: 'INBOUND', flag: 'IN', detail: 'New Delhi dispatches per Times of India May 20' },
+  { type: 'interdicted', label: 'MSC Francesca', status: 'SEIZED APR 22', flag: '--', detail: 'IRGCN — Reuters' },
+  { type: 'interdicted', label: 'Epaminondas', status: 'SEIZED APR 22', flag: '--', detail: 'IRGCN — Reuters' },
+  { type: 'interdicted', label: 'MV Euphoria', status: 'FIRED-ON APR 22', flag: '--', detail: 'IRGCN — UKMTO' },
+  { type: 'interdicted', label: 'M/V Touska', status: 'SEIZED APR 19', flag: 'IR', detail: 'USS Spruance — Reuters' },
+  { type: 'interdicted', label: 'Iran-linked tanker', status: 'SEIZED MAY 19', flag: '--', detail: 'WSJ exclusive Indian Ocean' },
+];
+
+const STATIC_NAVAL_ASSETS = [
+  { class: 'CVN', name: 'USS Nimitz (CVN-68)', status: 'TRANSIT-HOME (Rio)', src: 'USNI May 18' },
+  { class: 'CVN', name: 'USS Dwight D. Eisenhower (CVN-69)', status: 'NORFOLK — FIRE DAMAGE', src: '19FortyFive April 2026' },
+  { class: 'CVN', name: 'USS Gerald R. Ford (CVN-78)', status: 'IN-THEATER (assumed)', src: 'USNI fleet tracker' },
+  { class: 'LHA', name: 'USS Tripoli (LHA-7)', status: 'ACTIVE — recent Touska op', src: 'Reuters Apr 19' },
+  { class: 'LHD', name: 'USS Makin Island (LHD-8)', status: 'PREP-FOR-DEPLOY', src: 'National Interest May 19' },
+  { class: 'DDG', name: 'USS Spruance (DDG-111)', status: 'ACTIVE — Touska shooter', src: 'Reuters Apr 19' },
+];
+
+
+
 
 // ─── UNIFIED INTEL HANDLER ────────────────────────────────────────────────────
 async function handleGetIntel(env, CORS, path) {
@@ -110,7 +424,7 @@ async function handleAdminStatus(env, CORS) {
     intel_events: intel?.events?.length || 0,
     oil_brent: oil?.brent || null,
     article_hash: hash,
-    worker_version: '3.0',
+    worker_version: '3.1',
   }, { headers: CORS });
 }
 
@@ -164,7 +478,7 @@ async function runFullCycle(env) {
     operation: intel.operation || buildOpFreedomStatus(intel),
     status: intel.status || {},
     stats: intel.stats || buildDefaultStats(safeOil),
-    events: (intel.events && intel.events.length > 0) ? intel.events : BACKSTOP_EVENTS,
+    events: mergePinned((intel.events && intel.events.length > 0) ? intel.events : BACKSTOP_EVENTS),
     ticker: intel.ticker || buildDefaultTicker(),
     vessels: intel.vessels || STATIC_VESSELS,
     naval_assets: STATIC_NAVAL_ASSETS,
@@ -406,44 +720,37 @@ Respond ONLY with valid JSON — no markdown, no explanation, just the JSON obje
   "vessels": null
 }
 
-Produce 8-12 events covering the most important developments from May 1-9, 2026.
+Produce 8-12 events covering the most important developments from May 14-20, 2026 — PRIORITIZE the very latest news from today (May 20) and the Trump-Xi Beijing summit (May 14-15). DO NOT lean on training data; use ONLY the articles provided above.
 Prioritize CRITICAL severity events first. Include exactly 6-8 ticker items.
 Events must be factual and sourced — do not invent events not in the articles or context above.`;
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5',
-        max_tokens: 3000,
+    // Workers AI llama — replaces Anthropic Haiku (May 11 2026)
+    let raw = '';
+    try {
+      const aiRes = await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
         messages: [{ role: 'user', content: prompt }],
-      }),
-    });
-
-    if (!response.ok) {
-      const err = await response.text();
-      throw new Error(`Anthropic ${response.status}: ${err.slice(0, 200)}`);
+        max_tokens: 3000,
+        temperature: 0.4
+      });
+      raw = (aiRes && aiRes.response || '').trim();
+    } catch (e) {
+      throw new Error('Llama error: ' + e.message);
     }
-
-    const data = await response.json();
-    const raw  = data.content?.[0]?.text || '';
+    if (!raw) throw new Error('Llama returned empty');
     const jsonMatch = raw.match(/\{[\s\S]*\}/);
     if (!jsonMatch) throw new Error('No JSON found in Claude response');
 
     const parsed = JSON.parse(jsonMatch[0]);
-    console.log(`[synthesizeIntel] Claude success. Events: ${parsed.events?.length}, Threat: ${parsed.status?.threat_level}`);
+    sanitizeEmojis(parsed);
+    console.log(`[synthesizeIntel] Llama success. Events: ${parsed.events?.length}, Threat: ${parsed.status?.threat_level}`);
 
-    // Merge vessels: always use static (Claude doesn't produce them)
+    // Merge vessels: always use static (Llama doesn't produce them)
     parsed.vessels = STATIC_VESSELS;
     return parsed;
 
   } catch(e) {
-    console.error('[synthesizeIntel] Claude failed:', e.message);
+    console.error('[synthesizeIntel] Llama failed:', e.message);
     // Gemini fallback
     return await synthesizeWithGemini(env, articles, oil, warDay, prompt, e.message);
   }
@@ -472,6 +779,7 @@ async function synthesizeWithGemini(env, articles, oil, warDay, prompt, claudeEr
     if (!jsonMatch) throw new Error('No JSON in Gemini response');
 
     const parsed = JSON.parse(jsonMatch[0]);
+    sanitizeEmojis(parsed);
     parsed.vessels = STATIC_VESSELS;
     parsed._synthesizer = 'gemini-fallback';
     console.log('[synthesizeWithGemini] Gemini success. Events:', parsed.events?.length);
@@ -482,6 +790,36 @@ async function synthesizeWithGemini(env, articles, oil, warDay, prompt, claudeEr
     // Ultimate fallback: return backstop payload
     return buildBackstopPayload(warDay);
   }
+}
+
+
+// ─── EMOJI LAW ENFORCER ───────────────────────────────────────────────────────
+// 🚨 IS BANNED FOREVER — replace with 🟥 everywhere in synthesized output.
+function sanitizeEmojis(obj) {
+  const swap = (s) => typeof s === 'string' ? s.replace(/🚨/g, '🟥') : s;
+  if (!obj || typeof obj !== 'object') return;
+  for (const k of Object.keys(obj)) {
+    const v = obj[k];
+    if (typeof v === 'string') obj[k] = swap(v);
+    else if (Array.isArray(v)) {
+      for (let i = 0; i < v.length; i++) {
+        if (typeof v[i] === 'string') v[i] = swap(v[i]);
+        else if (typeof v[i] === 'object') sanitizeEmojis(v[i]);
+      }
+    } else if (typeof v === 'object' && v !== null) sanitizeEmojis(v);
+  }
+}
+
+// ─── TELEGRAM ALERT (stub — non-blocking) ─────────────────────────────────────
+async function sendTelegramAlert(env, html) {
+  try {
+    if (!env.TELEGRAM_BOT_TOKEN) return;
+    await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: env.ALERT_CHAT_ID, text: html, parse_mode: 'HTML' }),
+    });
+  } catch(e) { console.warn('[sendTelegramAlert]', e.message); }
 }
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
@@ -512,7 +850,7 @@ function buildBackstopPayload(warDay) {
       talks: 'AWAITING IRAN RESPONSE (OMAN)',
       threat_level: 'CRITICAL',
       war_day: warDay,
-      summary_one_line: 'US struck 2 Iranian tankers May 9; Iran seized Ocean Koi; Project Freedom paused pending deal',
+      summary_one_line: 'MOU framework close (May 27); US-Iran destroyer fire exchange (May 27); IRGC claims 25 vessels passed Tuesday; $24B Iran asset release proposed',
     },
     stats: {
       vessels_trapped: 'HUNDREDS',

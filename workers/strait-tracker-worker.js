@@ -1,10 +1,3 @@
-// StraitTracker — Cloudflare Edge Worker v6.0 — May 9 2026
-// tracker.warheatmap.app | Built by Bumboclaat for Pete McVries
-// UPDATE: Operation Project Freedom launched May 4, paused May 5 · US F/A-18s strafe Iranian tankers May 9
-//         Iran seizes Ocean Koi tanker · Fragile ceasefire holds despite active strikes
-//         Iran imposes new Hormuz transit rules · Trump threatens Project Freedom resumption
-// bundle-bust-2026050901
-
 const TOKEN_WINDOW_MS = 60 * 60 * 1000;
 
 function checkAccess(request) {
@@ -293,7 +286,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 
 <!-- TOP BAR -->
 <div id="topbar">
-  <div class="logo"><span>STRAIT</span>TRACKER<sub>v6.0 · LIVE</sub></div>
+  <div class="logo"><span>STRAIT</span>TRACKER<sub>v6.1 · LIVE · MAY 28</sub></div><div style="background:linear-gradient(135deg,#dc2626,#991b1b);padding:0.4rem 0.7rem;border-radius:6px;font-size:0.7rem;font-weight:700;color:#fff;display:inline-block;margin-left:0.5rem">🟥 MOU FRAMEWORK NEGOTIATING — $24B • USS/IRGC FIRE EXCHANGE MAY 27</div>
   <div class="threat-badge badge-critical" id="threat-level">🔴 CRITICAL — LOADING LIVE INTEL...</div>
   <div id="countdown-pill">
     <span class="cd-label">WAR DAY</span>
@@ -336,18 +329,18 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
   <div class="panel-section">
     <div class="panel-title">📊 SITREP — <span id="sitrep-date">LOADING...</span></div>
     <div class="stat-row"><span class="stat-label">War Day</span><span class="stat-val red loading" id="war-day-stat">--</span></div>
-    <div class="stat-row"><span class="stat-label">Ceasefire Status</span><span class="stat-val green" id="st-ceasefire">EXTENDED (INDEFINITE)</span></div>
+    <div class="stat-row"><span class="stat-label">Ceasefire Status</span><span class="stat-val yellow" id="st-ceasefire">MOU TIER 1 ACTIVE — TRUMP "WON'T RUSH"</span></div>
     <div class="stat-row"><span class="stat-label">US Blockade</span><span class="stat-val red loading" id="st-blockade">LOADING...</span></div>
     <div class="stat-row"><span class="stat-label">Hormuz Status</span><span class="stat-val red loading" id="st-hormuz">LOADING...</span></div>
-    <div class="stat-row"><span class="stat-label">Today: Ships Fired On</span><span class="stat-val red" id="st-fired">3 (APR 22)</span></div>
-    <div class="stat-row"><span class="stat-label">Today: Ships Seized</span><span class="stat-val red" id="st-seized">2 (MSC FRANCESCA, EPAMINONDAS)</span></div>
+    <div class="stat-row"><span class="stat-label">Today: Ships Fired On</span><span class="stat-val red" id="st-fired">USS/IRGC EXCHANGE — MAY 27</span></div>
+    <div class="stat-row"><span class="stat-label">Today: Ships Seized</span><span class="stat-val orange" id="st-seized">0 (24H) — MOU WINDOW</span></div>
     <div class="stat-row"><span class="stat-label">Total Vessels Interdicted</span><span class="stat-val orange" id="st-interdicted">34+ TURNED BACK (US)</span></div>
     <div class="stat-row"><span class="stat-label">Vessels Trapped in Gulf</span><span class="stat-val orange" id="st-trapped">~800</span></div>
     <div class="stat-row"><span class="stat-label">AIS-Dark VLCCs</span><span class="stat-val purple">HERO II + HEDY (4M BBL)</span></div>
-    <div class="stat-row"><span class="stat-label">Iranian Tankers Crossed</span><span class="stat-val yellow">34+ (since last wk)</span></div>
+    <div class="stat-row"><span class="stat-label">Iranian Tankers Crossed</span><span class="stat-val yellow">25+ (TUE MAY 26 — IRGC CLAIM)</span></div>
     <div class="stat-row"><span class="stat-label">US Navy Boardings</span><span class="stat-val blue">2 (SANCTIONED VESSELS)</span></div>
     <div class="stat-row"><span class="stat-label">Asian Waters Intercepts</span><span class="stat-val blue">3 (TODAY)</span></div>
-    <div class="stat-row"><span class="stat-label">Peace Talks Status</span><span class="stat-val red" id="st-talks">STALLED — IRAN PROPOSAL PENDING</span></div>
+    <div class="stat-row"><span class="stat-label">Peace Talks Status</span><span class="stat-val orange" id="st-talks">MOU PHASE 1 — TEXT NEGOTIATING ($24B)</span></div>
     <div class="stat-row"><span class="stat-label">Supply Eliminated</span><span class="stat-val red" id="st-supply">1B BARRELS</span></div>
   </div>
 
@@ -409,55 +402,13 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 <div id="right-panel">
   <div style="padding:0.6rem 0.75rem;font-size:0.62rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)">📰 INTEL BRIEFS</span></div><div id="intel-briefs"><span id="intel-updated" style="font-size:0.55rem;font-weight:400;color:#334155;font-family:monospace">LIVE</span></div>
 
-  <div class="intel-card">
-    <div class="intel-tag">FLASH — TODAY</div>
-    <div class="intel-header"><div class="intel-icon" style="background:rgba(255,58,58,0.15)">🚢</div><div class="intel-title">IRGC Seizes MSC Francesca + Epaminondas</div></div>
-    <div class="intel-body">Iran's Revolutionary Guard fired on 3 ships in Hormuz, seizing <strong>MSC Francesca</strong> (container ship) and <strong>Epaminondas</strong> (container ship). Third vessel, <strong>MV Euphoria</strong>, was also attacked. IRGCN brought both seized ships to shore "for inspection." UK Maritime Trade Operations (UKMTO) confirmed: container ship hit at 02:55 UTC — heavy bridge damage. Cargo ship stopped after fire ~3hrs later. Iran called seizures retaliation for US "capture" of Iranian commercial vessel.</div>
-    <div class="intel-src">UKMTO / Reuters / WSJ / Iranian state media — April 22, 2026</div>
+  <div class="intel-card" id="intel-loading">
+    <div class="intel-tag blue">LIVE FEED</div>
+    <div class="intel-header"><div class="intel-icon" style="background:rgba(0,180,255,0.15)">📡</div><div class="intel-title">Loading live intel…</div></div>
+    <div class="intel-body">Fetching the latest verified Strait of Hormuz developments from the live intel feed. If this card persists, the feed is temporarily unreachable — pull to refresh.</div>
+    <div class="intel-src">strait-news-worker — live</div>
   </div>
 
-  <div class="intel-card">
-    <div class="intel-tag">FLASH — TODAY</div>
-    <div class="intel-header"><div class="intel-icon" style="background:rgba(168,85,247,0.15)">🛢</div><div class="intel-title">Hero II + Hedy Supertankers Go Dark</div></div>
-    <div class="intel-body">Two Iranian VLCCs — <strong>Hero II</strong> and <strong>Hedy</strong> — entered the Arabian Sea with AIS transponders OFF, carrying <strong>~4 million barrels</strong> combined. Vortexa used satellite imagery to confirm positions. A third VLCC, the <strong>Diona</strong>, appeared to turn back. The tankers last broadcast positions in Feb-Mar 2026. Ultimate destination unclear — likely China. US Navy has pledged to intercept any sanctioned vessels regardless of location. Vessels not yet in the clear.</div>
-    <div class="intel-src">Vortexa / Bloomberg / TankerTrackers.com — April 22, 2026</div>
-  </div>
-
-  <div class="intel-card">
-    <div class="intel-tag blue">TODAY</div>
-    <div class="intel-header"><div class="intel-icon" style="background:rgba(0,180,255,0.15)">🇺🇸</div><div class="intel-title">US Intercepts 3 Iranian Tankers in Asian Waters</div></div>
-    <div class="intel-body">The US military intercepted at least <strong>3 Iranian-flagged tankers</strong> in Asian waters and is redirecting them, per Reuters exclusive sources. The intercept zone has expanded well beyond Hormuz — US is now targeting Iranian shipping across the Indo-Pacific. The USS boarding of an oil tanker in the Indian Ocean last week showed Washington making good on its pledge to track Iran-linked vessels globally. Iran called it "piracy on the high seas."</div>
-    <div class="intel-src">Reuters Exclusive / CNN / Al Jazeera — April 22, 2026</div>
-  </div>
-
-  <div class="intel-card">
-    <div class="intel-tag green">CEASEFIRE UPDATE</div>
-    <div class="intel-header"><div class="intel-icon" style="background:rgba(0,230,118,0.15)">🕊</div><div class="intel-title">Trump Extends Ceasefire Indefinitely — Blockade Stays</div></div>
-    <div class="intel-body">President Trump announced the US will <strong>indefinitely extend the ceasefire</strong> with Iran — but the US naval blockade remains fully in place. Iran says it has <strong>"yet to decide"</strong> whether to join new peace talks. Around <strong>800 vessels remain trapped</strong> in the Persian Gulf. The International Maritime Organization says it's working on an evacuation plan contingent on de-escalation. Asian shipowners may begin crossing before Western firms — they have higher risk tolerance and can pay potential Iranian tolls.</div>
-    <div class="intel-src">AP / CNBC / gCaptain / IMO — April 22, 2026</div>
-  </div>
-
-  <div class="intel-card">
-    <div class="intel-tag orange">SUPPLY SHOCK</div>
-    <div class="intel-header"><div class="intel-icon" style="background:rgba(255,122,0,0.15)">💣</div><div class="intel-title">1 Billion Barrels Eliminated — Dual Blockade Holds</div></div>
-    <div class="intel-body">Top traders estimate the Iran war has <strong>eliminated 1 billion barrels</strong> of oil supply. Ship traffic is still far below the pre-war norm of <strong>100+ vessels/day</strong> through Hormuz. At least 34 Iran-linked tankers + gas carriers have crossed the blockade line since early last week, 17 carrying cargo — but many using ghost fleet tactics (AIS off, transponders dark, alternate routes). Washington initially encouraged Iranian barrels to flow to contain prices, then reversed with blockade on April 13.</div>
-    <div class="intel-src">Bloomberg / CNBC / gCaptain — April 22, 2026</div>
-  </div>
-
-  <div class="intel-card">
-    <div class="intel-tag purple">M/V TOUSKA — PRIOR</div>
-    <div class="intel-header"><div class="intel-icon" style="background:rgba(168,85,247,0.15)">⚓</div><div class="intel-title">Touska Seizure — Marines Rappel Aboard (Apr 19-20)</div></div>
-    <div class="intel-body">USS Spruance (DDG-111) fired on engine room of Iranian-flagged <strong>M/V Touska</strong> after 6-hour standoff in Gulf of Oman. US Marines rappelled from <strong>USS Tripoli (LHA-7)</strong>. Ship under US Treasury sanctions. Iran's Khatam al-Anbiya HQ vowed retaliation. Today's seizures appear to be direct response. Iran Al Jazeera piece: "Iran calls US ship seizure piracy — is it?"</div>
-    <div class="intel-src">CENTCOM / Truth Social / J-Post — April 19-20, 2026</div>
-  </div>
-
-  <div class="intel-card">
-    <div class="intel-tag yellow">OIL MARKETS</div>
-    <div class="intel-header"><div class="intel-icon" style="background:rgba(255,215,0,0.15)">📈</div><div class="intel-title">Oil Prices — Hormuz Barometer</div></div>
-    <div class="intel-body">The number of ships passing through Hormuz has become a <strong>real-time barometer</strong> of how the war is affecting global energy. NYT: "Iran Again Tightens Its Grip on Shipping." Petroleum-derived products — clothes, crayons, plastics — seeing cost pressure. Netherlands gov spending <strong>$1.1B</strong> to offset fuel costs. India cut off from Iranian crude after US waiver expired. Oil prices updating live in topbar above.</div>
-    <div class="intel-src">NYT / CNBC / Al Jazeera — April 22, 2026</div>
-  </div>
-</div>
 
 <!-- STATUSBAR -->
 <div id="statusbar">
@@ -624,9 +575,39 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
   const ASSETS = {
     tankers: [
       {
+        lat:30.05, lng:47.95, label:'MSC Sariska V', flag:'PA', status:'STRUCK JUN 2',
+        color:'#ff6d00',
+        detail:'MSC SARISKA V (IMO 8715857) — Panama-flagged 74,500-DWT Aponte-family vessel struck by projectiles off Umm Qasr, Iraq on June 2, 2026. Current MSC-relevant ship in theater (Aponte family = Trump-touted Panama Canal port partner). First reported hit on the Iraq crude-export workaround route.',
+        src:'OSINT / maritime advisories — June 2, 2026'
+      },
+      {
+        lat:23.63, lng:58.52, label:'Mina al Fahal Terminal — STRIKE', flag:'OM', status:'STRUCK JUN 5',
+        color:'#ff1744',
+        detail:'MINA AL FAHAL (Oman) — Explosion between SBM 1 & SBM 2 offshore moorings at Oman\'s ~1M bpd export hub on June 5, 2026. Loading suspended then resumed; VLCCs anchored offshore. Alleged drone. FIRST hit on open-water export infra BEYOND Hormuz. Conflicting claim: PDO says operations normal.',
+        src:'Reuters (x3) / Moneycontrol / Al Arabiya — June 5, 2026'
+      },
+      {
+        lat:26.45, lng:56.95, label:'Chinese VLCC Alpha', flag:'CN', status:'TRANSITED MAY 20',
+        color:'#00e676',
+        detail:'CHINESE SUPERTANKER #1 — One of two Chinese VLCCs that exited the Strait of Hormuz on May 20, 2026 carrying ~2 million barrels of crude. Combined with sister vessel, China extracted 4M barrels — the largest single-day blockade-easing signal since the war began. Indicates tentative diplomatic thaw post Trump-Xi Beijing summit (May 14-15).',
+        src:'Reuters / Gulf News — May 20, 2026'
+      },
+      {
+        lat:26.41, lng:56.92, label:'Chinese VLCC Bravo', flag:'CN', status:'TRANSITED MAY 20',
+        color:'#00e676',
+        detail:'CHINESE SUPERTANKER #2 — Sister vessel to Alpha. Both exited Hormuz May 20 carrying combined ~4M barrels. Vance + Trump simultaneously talking up Iran deal prospects same day.',
+        src:'Reuters — May 20, 2026'
+      },
+      {
+        lat:26.50, lng:56.85, label:'India-bound Crude Carrier', flag:'IN', status:'INBOUND',
+        color:'#00b0ff',
+        detail:'INDIA SECURES SUPPLY — New Delhi announces dispatch of oil tankers through Strait of Hormuz to secure crude supply amid Iran-conflict disruptions. Third-largest Iranian oil customer historically positioning to capitalize on transit thaw.',
+        src:'Times of India — May 20, 2026'
+      },
+      {
         lat:26.32, lng:57.1, label:'Rich Starry', flag:'SG', status:'TRANSITED',
         color:'#00e676',
-        detail:'Singapore-flagged VLCC. First confirmed transit through blockade corridor — Apr 14, 2026. Vessel was already at sea when blockade declared, not departing Iranian port. Opened the "loophole" debate.',
+        detail:'Singapore-flagged VLCC. First confirmed transit through blockade corridor — May 20, 2026. Vessel was already at sea when blockade declared, not departing Iranian port. Opened the "loophole" debate.',
         src:'Reuters / MarineTraffic — April 14, 2026'
       },
       {
@@ -644,13 +625,19 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
     ],
     interdicted: [
       {
-        lat:26.35, lng:56.8, label:'MSC Francesca', flag:'--', status:'SEIZED',
+        lat:23.5, lng:62.0, label:'Iran-Linked Tanker', flag:'IR', status:'SEIZED MAY 19',
+        color:'#ff3a3a',
+        detail:'INDIAN OCEAN SEIZURE — US Navy intercepted and seized Iranian-affiliated oil tanker in Indian Ocean (WSJ exclusive). Treasury economic-pressure track running parallel to Trump deal rhetoric. Demonstrates sanctions enforcement continues despite summit talk.',
+        src:'WSJ exclusive — May 19, 2026'
+      },
+      {
+        lat:26.35, lng:56.8, label:'MSC Francesca (HISTORICAL · APR)', flag:'--', status:'SEIZED APR 22',
         color:'#ff3a3a',
         detail:'SEIZED APR 22: Container ship fired on and seized by Iranian Revolutionary Guard Corps in Strait of Hormuz. IRGCN brought vessel to shore "for inspection." Part of coordinated attack on 3 vessels. UKMTO confirmed attack at 02:55 UTC. Iran claims seizure was retaliation for US capture of Iranian vessel.',
         src:'Reuters / UKMTO / WSJ / Iranian state media — April 22, 2026'
       },
       {
-        lat:26.28, lng:56.6, label:'Epaminondas', flag:'--', status:'SEIZED',
+        lat:26.28, lng:56.6, label:'Epaminondas (HISTORICAL · APR)', flag:'--', status:'SEIZED APR 22',
         color:'#ff3a3a',
         detail:'SEIZED APR 22: Second container ship seized by IRGCN in same Hormuz operation as MSC Francesca. Brought to shore for "inspection." Third vessel in coordinated attack was MV Euphoria (attacked but outcome unclear). Seizures represent significant IRGCN escalation — first major dual seizure since war began.',
         src:'Reuters / UKMTO / Iranian state media — April 22, 2026'
@@ -662,7 +649,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
         src:'WSJ / UKMTO — April 22, 2026'
       },
       {
-        lat:25.2, lng:57.1, label:'M/V Touska', flag:'IR', status:'SEIZED',
+        lat:25.2, lng:57.1, label:'M/V Touska (HISTORICAL · APR)', flag:'IR', status:'SEIZED APR 19',
         color:'#ff3a3a',
         detail:'SEIZED APR 19-20: Iranian-flagged cargo ship under US Treasury sanctions. USS Spruance (DDG-111) fired on engine room after 6-hour standoff in Gulf of Oman. US Marines rappelled from USS Tripoli (LHA-7). Iran\u2019s Khatam al-Anbiya vows retaliation — today\u2019s IRGC seizures appear to be direct response.',
         src:'CENTCOM / Truth Social / J-Post — April 19-20, 2026'
@@ -720,6 +707,18 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
       },
     ],
     navy: [
+      {
+        lat:26.10, lng:57.50, label:'USS Makin Island (LHD-8)', flag:'US', status:'PREP-FOR-DEPLOY',
+        color:'#00b0ff',
+        detail:'USS MAKIN ISLAND — Wasp-class amphibious assault ship being prepared for Persian Gulf deployment as of May 19. Would add amphibious capability to existing 20-warship Iran-blockade force.',
+        src:'National Interest / USNI News — May 19, 2026'
+      },
+      {
+        lat:25.80, lng:57.20, label:'USS Gerald R. Ford (CVN-78)', flag:'US', status:'IN-THEATER',
+        color:'#00b0ff',
+        detail:'USS GERALD R. FORD — Primary carrier on Hormuz station. USS Eisenhower remains at Norfolk Naval Shipyard after April fire (not deployable). USS Nimitz on circumnavigation home via Rio per USNI May 18 fleet tracker.',
+        src:'USNI Fleet Tracker — May 18, 2026'
+      },
       {
         lat:25.6, lng:57.5, label:'USS Gravely (DDG-107)', type:'Arleigh Burke Destroyer',
         color:'#00b4ff',
@@ -924,6 +923,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
     if (d.operation) updateOpBanner(d.operation);
     // Freshness badge
     if (d.updated) updateFreshnessBadge(d.updated);
+    if (d.updated) updateIntelTimestamp(d.updated); // D3 fix
     // Sitrep date
     var sd = document.getElementById('sitrep-date');
     if (sd && d.updated) {

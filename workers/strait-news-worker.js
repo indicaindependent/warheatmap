@@ -12,7 +12,7 @@ export default {
     if (path === '/smoke-test' && req.method === 'POST') {
       const _auth = req.headers.get('Authorization') || '';
       if (_auth !== (env.SMOKE_TEST_TOKEN ? 'Bearer ' + env.SMOKE_TEST_TOKEN : 'Bearer __disabled__')) return Response.json({ ok: false, error: 'unauthorized' }, { status: 401 });
-      return Response.json({ ok: true, worker: 'strait-news-worker', version: '3.1', updated: new Date().toISOString() });
+      return Response.json({ ok: true, worker: 'strait-news-worker', version: '3.2', updated: new Date().toISOString() });
     }
 
     // ── PUBLIC ENDPOINTS ──
@@ -22,7 +22,7 @@ export default {
     if (path === '/ais')         return handleGetAIS(env, CORS);
     if (path === '/vessels')     return handleGetVessels(env, CORS);
     if (path === '/ticker')      return handleGetTicker(env, CORS);
-    if (path === '/health')      return Response.json({ ok: true, version: '3.1', ts: new Date().toISOString() }, { headers: CORS });
+    if (path === '/health')      return Response.json({ ok: true, version: '3.2', ts: new Date().toISOString() }, { headers: CORS });
 
     // ── ADMIN ENDPOINTS ──
     const auth = req.headers.get('Authorization') || '';
@@ -33,7 +33,7 @@ export default {
     if (path === '/admin/refresh' && req.method === 'POST') return handleAdminRefresh(env, CORS);
     if (path === '/admin/status'  && req.method === 'GET')  return handleAdminStatus(env, CORS);
 
-    return Response.json({ ok: true, version: '3.1', endpoints: ['/intel', '/news/latest', '/status', '/oil-live', '/ais', '/vessels', '/ticker', '/health'] }, { headers: CORS });
+    return Response.json({ ok: true, version: '3.2', endpoints: ['/intel', '/news/latest', '/status', '/oil-live', '/ais', '/vessels', '/ticker', '/health'] }, { headers: CORS });
   },
 
   // ── CRON: every 30 minutes ──
@@ -54,6 +54,34 @@ const WAR_START = new Date('2026-02-28T00:00:00Z').getTime();
 // Added by Bumboclaat 2026-06-05. Merged on top of synthesis/backstop, deduped by id.
 // To retire an event, remove it here. Newest first.
 const PINNED_EVENTS = [
+  { id:'us_strikes_0609', date:'June 9, 2026', tag:'BREAKING', tag_color:'red', icon:'🟥',
+    title:'US STRIKES ~20 IRANIAN AIR-DEFENSE & RADAR SITES NEAR HORMUZ',
+    body:'Late Jun 9, US/CENTCOM fighter aircraft struck roughly 20 Iranian air-defense, radar, ground-control and surveillance sites near the Strait of Hormuz — what Washington called a "proportional response" to the Jun 8 Apache downing. Iranian state media reported explosions in Hormozgan Province: Sirik, Bandar Abbas, Minab and Qeshm Island. US officials framed it as a limited warning, NOT the opening of a broader campaign; they said it should not derail talks.',
+    source:'CENTCOM / RFE/RL / NYT / WSJ — June 9, 2026', severity:'critical' },
+  { id:'iran_retaliation_0610', date:'June 10, 2026', tag:'ESCALATION', tag_color:'red', icon:'💥',
+    title:'IRAN HITS US AL-AZRAQ BASE (JORDAN) + KUWAIT & BAHRAIN TARGETS',
+    body:"Jun 10: Iran's IRGC said it launched missiles and drones at the US Al-Azraq base in Jordan plus American-linked targets in Kuwait and Bahrain, in retaliation for the Jun 9 US strikes. Jordan's military said it intercepted and destroyed five missiles bound for Al-Azraq; Bahrain and Kuwait reported engaging incoming threats. A US official said “just about all” projectiles were intercepted, with NO confirmed US casualties or facility damage (assessment ongoing). Iran's claimed damage is unverified.",
+    source:'IRGC / RFE/RL / Reuters — June 10, 2026', severity:'critical' },
+  { id:'trump_paytheprice_0610', date:'June 10, 2026', tag:'DIPLOMACY', tag_color:'orange', icon:'⚠️',
+    title:'TRUMP: IRAN "WILL PAY THE PRICE"; TALKS NOW "UNDER REVIEW"',
+    body:'Jun 10: Trump (Truth Social) called Iran "completely defeated" and warned it would "pay the price" for stalling a deal; on Fox News he said he was close to authorizing strikes on Iranian power plants and bridges if Tehran refuses to sign — while still insisting a deal is "close." Qatari mediators traveled to Tehran. Iran FM spokesman Baghaei said the future of US talks is "under review" after the overnight exchange. The April ceasefire is at its most strained since signing.',
+    source:'RFE/RL / Fox News / Reuters — June 10, 2026', severity:'critical' },
+  { id:'apache0608', date:'June 8, 2026', tag:'BREAKING', tag_color:'red', icon:'🟥',
+    title:'US APACHE DOWN OFF OMAN — CREW SAVED BY NAVY DRONE, CAUSE UNCONFIRMED',
+    body:'A US Army AH-64 Apache went down near Hormuz off Oman late Jun 8 — the first Apache lost this war. Both crew were rescued alive (~2hrs) by a US Navy surface DRONE, a first-of-its-kind save. Cause is officially UNCONFIRMED (Iranian fire vs mechanical) and Iran has claimed NOTHING — "shoot-down" framing is unverified on both sides.',
+    source:'CENTCOM (Capt. Hawkins) / AP / Axios / NYT — June 8-9, 2026', severity:'critical' },
+  { id:'iliexchange0607', date:'June 8, 2026', tag:'ESCALATION', tag_color:'red', icon:'💥',
+    title:'FIRST ISRAEL-IRAN DIRECT EXCHANGE SINCE APRIL CEASEFIRE',
+    body:'Jun 7: Iran fired ~30 ballistic missiles at 3 Israeli air bases (over Israeli strikes on Beirut). Jun 8: Israel hit Iranian air defenses + the Mahshahr petrochemical complex; blasts in Tehran, Isfahan, Tabriz. Both PAUSED after. Netanyahu: "the fire has ceased." Iran warns it resumes if Israel keeps striking S. Lebanon.',
+    source:'IRGC / IDF / Iranian state media via AP — June 7-8, 2026', severity:'critical' },
+  { id:'mou60unsigned0609', date:'June 9, 2026', tag:'DIPLOMACY', tag_color:'orange', icon:'📜',
+    title:'60-DAY HORMUZ MOU NEGOTIATED BUT UNSIGNED — BOTH SIDES CONTRADICT TERMS',
+    body:'A tentative US-Iran 60-day ceasefire / Hormuz-reopening MOU has been negotiated but remains UNSIGNED, with both sides openly contradicting each other on its terms. Trump claims a deal is "2-3 days" away — a timeline he has repeated for roughly two months.',
+    source:'Live research synthesis / AP / CNN tally — June 9, 2026', severity:'high' },
+  { id:'aircraftlosses0609', date:'June 9, 2026', tag:'MILITARY', tag_color:'yellow', icon:'✈️',
+    title:'US AIRCRAFT LOSSES MOUNT: 5+ JETS, 7 KC-135s, SAR HELI, 2+ DOZEN DRONES, 1 APACHE',
+    body:'Since the war began in late February, the US military has lost at least five fighter jets, seven KC-135 Stratotanker refuelers, a search-and-rescue helicopter, more than two dozen drones, and now an Apache — a steep attrition toll for enforcing the crude blockade and contesting Hormuz.',
+    source:'Congressional Research Service (May 2026) / NYT — June 2026', severity:'high' },
   { id:'omanterminal05', date:'June 5, 2026', tag:'BREAKING', tag_color:'red', icon:'🟥',
     title:'OMAN MINA AL FAHAL TERMINAL STRUCK — HALTED, THEN RESUMED',
     body:'Explosion near the SBM mooring berths at Oman\'s ~1M bpd Mina al Fahal crude export hub halted loading early June 5 (03:41 BST). Operations RESUMED hours later (07:17 BST); Oman insists ops "proceeding normally." First reported hit on open-water export infrastructure BEYOND the Strait — the conflict\'s geography is widening past the chokepoint.',
@@ -424,7 +452,7 @@ async function handleAdminStatus(env, CORS) {
     intel_events: intel?.events?.length || 0,
     oil_brent: oil?.brent || null,
     article_hash: hash,
-    worker_version: '3.1',
+    worker_version: '3.2',
   }, { headers: CORS });
 }
 
@@ -457,6 +485,13 @@ async function runFullCycle(env) {
     // Articles unchanged and cache < 1h old — just update oil + timestamp
     console.log(`[runFullCycle] Articles unchanged (hash=${newHash}), skipping synthesis. Cache age: ${Math.round(cacheAge/60000)}m`);
     intel = { ...prevCached, oil: safeOil };
+    // Backfill any newly-added default stat/status keys onto cached payloads (post-deploy safety)
+    intel.stats  = { ...buildDefaultStats(safeOil), ...(prevCached.stats  || {}) };
+    intel.status = { ...buildDefaultStatus(Math.floor((Date.now()-WAR_START)/86400000)), ...(prevCached.status || {}) };
+    // Heal stale placeholder values left in old caches
+    var _df = buildDefaultStats(safeOil);
+    if (!intel.stats.ships_fired_on || /SYNCING/i.test(intel.stats.ships_fired_on)) intel.stats.ships_fired_on = _df.ships_fired_on;
+    if (!intel.stats.tankers_crossed || /SYNCING/i.test(intel.stats.tankers_crossed)) intel.stats.tankers_crossed = _df.tankers_crossed;
   } else {
     // Synthesize fresh intel
     intel = await synthesizeIntel(env, safeArticles, safeOil, safeAIS, now);
@@ -476,8 +511,8 @@ async function runFullCycle(env) {
     updated: now.toISOString(),
     war_day: warDay,
     operation: intel.operation || buildOpFreedomStatus(intel),
-    status: intel.status || {},
-    stats: intel.stats || buildDefaultStats(safeOil),
+    status: { ...buildDefaultStatus(warDay), ...(intel.status || {}) },
+    stats: { ...buildDefaultStats(safeOil), ...(intel.stats || {}) },
     events: mergePinned((intel.events && intel.events.length > 0) ? intel.events : BACKSTOP_EVENTS),
     ticker: intel.ticker || buildDefaultTicker(),
     vessels: intel.vessels || STATIC_VESSELS,
@@ -580,21 +615,20 @@ async function fetchOilPrices(env) {
     }
   } catch(e) { console.warn('[fetchOilPrices] AV WTI error:', e.message); }
 
-  // Strategy 3: Finnhub fallback for BNO (Brent ETF proxy)
-  if (!oil.brent && FH_KEY) {
+  // Strategy 3: yfin self-hosted worker (REAL Brent BZ=F + WTI CL=F) — replaces broken BNO*3.1 proxy.
+  // Fixed by Bumboclaat 2026-06-09: old BNO*3.1 produced fabricated ~$160 Brent. quote.YOUR-DOMAIN.example wraps Yahoo v8/chart.
+  if ((!oil.brent || !oil.wti) && env.YFIN_API_KEY) {
     try {
-      const r = await fetch(`https://finnhub.io/api/v1/quote?symbol=BNO&token=${FH_KEY}`);
+      const r = await fetch('https://quote.YOUR-DOMAIN.example/q?symbols=BZ%3DF,CL%3DF', { headers: { 'X-API-Key': env.YFIN_API_KEY } });
       if (r.ok) {
         const d = await r.json();
-        if (d.c) {
-          // BNO trades at ~1/3 of Brent spot — rough proxy
-          oil.brent = parseFloat((d.c * 3.1).toFixed(2));
-          const pct = ((d.c - d.pc) / d.pc * 100).toFixed(2);
-          oil.brent_change = (pct > 0 ? '+' : '') + pct + '%';
-          console.log('[fetchOilPrices] Used Finnhub BNO proxy for Brent');
-        }
+        const bz = d?.quotes?.['BZ=F'];
+        const cl = d?.quotes?.['CL=F'];
+        if (!oil.brent && bz?.price) { oil.brent = parseFloat(bz.price.toFixed(2)); if (bz.changePercent != null) oil.brent_change = (bz.changePercent > 0 ? '+' : '') + bz.changePercent.toFixed(2) + '%'; }
+        if (!oil.wti && cl?.price) { oil.wti = parseFloat(cl.price.toFixed(2)); if (cl.changePercent != null) oil.wti_change = (cl.changePercent > 0 ? '+' : '') + cl.changePercent.toFixed(2) + '%'; }
+        console.log('[fetchOilPrices] Used yfin worker (BZ=F/CL=F):', oil.brent, oil.wti);
       }
-    } catch(e) { console.warn('[fetchOilPrices] Finnhub BNO error:', e.message); }
+    } catch(e) { console.warn('[fetchOilPrices] yfin error:', e.message); }
   }
 
   // Strategy 4: Yahoo Finance proxy for CL=F (WTI futures)
@@ -623,6 +657,20 @@ async function fetchOilPrices(env) {
     } catch(e) {}
   }
 
+  // Sanity clamp (Bumboclaat 2026-06-09): reject impossible prints, keep last-good from KV instead of showing garbage.
+  const CLAMP_LO = 30, CLAMP_HI = 130;
+  for (const k of ['brent','wti']) {
+    if (oil[k] != null && (oil[k] < CLAMP_LO || oil[k] > CLAMP_HI)) {
+      console.warn(`[fetchOilPrices] CLAMP: ${k}=$${oil[k]} out of [${CLAMP_LO},${CLAMP_HI}] — discarding`);
+      oil[k] = null; oil[k+'_change'] = null;
+    }
+  }
+  if (!oil.brent || !oil.wti) {
+    try {
+      const c = await env.STRAIT_NEWS_KV.get('oil_cache', 'json');
+      if (c) { if (!oil.brent && c.brent) { oil.brent = c.brent; oil.brent_change = c.brent_change; } if (!oil.wti && c.wti) { oil.wti = c.wti; oil.wti_change = c.wti_change; } }
+    } catch(e) {}
+  }
   console.log(`[fetchOilPrices] Final: Brent=$${oil.brent} (${oil.brent_change}), WTI=$${oil.wti} (${oil.wti_change})`);
   return oil;
 }
@@ -656,19 +704,18 @@ async function synthesizeIntel(env, articles, oil, aisData, now) {
 OIL PRICES: ${oilCtx}
 ${aisCtx}
 
-GROUND TRUTH CONTEXT — MAY 9, 2026 (authoritative, use this as baseline):
-- Iran-US-Israel war began ~Feb 27, 2026. WAR DAY ${warDay}.
-- Operation Project Freedom: LAUNCHED May 4 (15,000 troops, 100+ aircraft), PAUSED May 5 for diplomacy.
-- Trump warned today he may RESUME Project Freedom if Iran doesn't respond to US peace proposal.
-- Ceasefire: FRAGILE. US struck Iranian tankers M/T Hasna + Sea Star III (F/A-18 strafing) May 9.
-- Iran seized tanker Ocean Koi in Gulf of Oman May 8-9 (IRGC "special operation").
-- Iran imposed new Hormuz transit RULES — Tehran declares itself "regulator" of the Strait.
-- US/Iran exchanged fire May 7 — both claim self-defense. Ceasefire nominally holds.
-- Bahrain detained 41 people for alleged IRGC links (May 9).
-- US awaiting Iran response to peace proposal (Rubio). Oman mediating.
-- Brent crude: ~$109-115/bbl. Shipping insurance: 20x normal rates.
-- Hundreds of vessels still stranded. 20,000+ seafarers affected.
-- Key threat: Trump could restart Project Freedom at any time.
+GROUND TRUTH BASELINE — AS OF JUNE 10, 2026 (use ONLY if newer articles below are absent; ALWAYS prefer fresher dated articles over this baseline):
+- Iran-US-Israel war began ~Feb 27, 2026. WAR DAY ${warDay}. Strait of Hormuz effectively CLOSED ~${warDay} consecutive days.
+- Jun 8 (late Mon): US Army AH-64 Apache went down off Oman near Hormuz — FIRST Apache lost this war. Both crew RESCUED ALIVE (~2hrs) by a US Navy SURFACE DRONE (first-ever drone rescue). CAUSE UNCONFIRMED (Iranian fire vs mechanical). Iran has claimed NOTHING. (CENTCOM/AP/Axios/NYT)
+- Jun 7: Iran fired ~30 ballistic missiles at 3 Israeli air bases (retaliation for Israeli strikes on Beirut's southern suburbs). (IRGC/IDF via AP)
+- Jun 8: Israel struck Iranian air defenses + Mahshahr petrochemical complex; blasts in Tehran/Isfahan/Tabriz. Both sides PAUSED after. Netanyahu: "the fire has ceased." Iran warns it resumes if Israel hits S. Lebanon. First direct Israel-Iran exchange since the Apr 8 ceasefire.
+- US aircraft losses since late Feb: >=5 fighter jets, 7 KC-135 tankers, 1 SAR helicopter, 2+ dozen drones, now 1 Apache. (CRS May 2026)
+- Oil: Brent retreated to ~$92-93/bbl Tue Jun 9 (after a >$97 intraday spike Mon). WTI upper-$80s/low-$90s. (Do NOT report >$130 — that is a data error.)
+- A tentative US-Iran 60-day ceasefire / Hormuz-reopening MOU is NEGOTIATED but UNSIGNED; both sides contradict its terms. Trump claims a deal is "2-3 days" away (repeated for ~2 months).
+- Jun 9 (late): US/CENTCOM struck ~20 Iranian air-defense/radar/surveillance sites near Hormuz (Sirik, Bandar Abbas, Minab, Qeshm) — "proportional response" to the Jun 8 Apache downing; US framed it as a limited warning.
+- Jun 10: Iran's IRGC retaliated with missiles/drones on the US Al-Azraq base in Jordan + targets in Kuwait & Bahrain; Jordan intercepted 5, US says "just about all" intercepted, no confirmed US casualties (Iran's claimed damage unverified).
+- Jun 10: Trump says Iran "completely defeated," will "pay the price," hints at strikes on Iranian power plants/bridges while still calling a deal "close"; Qatar mediating in Tehran; Iran says talks "under review."
+- Threat: CRITICAL. The April ceasefire is at its most strained since signing — near collapse but not formally ended.
 
 RECENT NEWS ARTICLES:
 ${articleText || 'No new articles available this cycle — use ground truth context above.'}
@@ -698,6 +745,9 @@ Respond ONLY with valid JSON — no markdown, no explanation, just the JSON obje
     "oil_brent": ${oil.brent || 'null'},
     "oil_wti": ${oil.wti || 'null'},
     "ships_escort_convoy": "number or string",
+    "ships_fired_on": "string — today's count/status of ships fired upon, e.g. '2 (JUN 10)' or 'NONE REPORTED (24H)'",
+    "tankers_crossed": "string — Iranian/foreign tankers crossing Hormuz in last 24-48h, e.g. '25+ (IRGC CLAIM)' or 'MINIMAL — LANE CONTESTED'",
+    "ships_seized": "string — vessels seized/detained in last 24-48h, e.g. '1 (JUN 10)' or 'NONE REPORTED (24H)'",
     "us_forces_theater": "90,000+",
     "insurance_premium_multiplier": "20x"
   },
@@ -817,7 +867,7 @@ async function sendTelegramAlert(env, html) {
     await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: env.ALERT_CHAT_ID, text: html, parse_mode: 'HTML' }),
+      body: JSON.stringify({ chat_id: env.TELEGRAM_CHAT_ID, text: html, parse_mode: 'HTML' }),
     });
   } catch(e) { console.warn('[sendTelegramAlert]', e.message); }
 }
@@ -840,23 +890,26 @@ function buildBackstopPayload(warDay) {
     operation: {
       name: 'Operation Project Freedom',
       status: 'PAUSED',
-      detail: 'Launched May 4. Paused May 5 for diplomacy. Trump threatens resumption if Iran stalls.',
+      detail: 'CENTCOM blockade-enforcement posture ongoing. Ceasefire fragile and unsigned after the Jun 7-8 exchange.',
       color: 'orange',
     },
     status: {
-      ceasefire: 'FRAGILE — ACTIVE STRIKES',
-      hormuz: 'CONTESTED — IRAN IMPOSING RULES',
+      ceasefire: 'STRAINED — NEAR COLLAPSE AFTER JUN 9-10 US/IRAN EXCHANGE',
+      hormuz: 'EFFECTIVELY CLOSED ~102 DAYS',
       blockade: 'PARTIAL — US/IRAN BOTH ENFORCING',
-      talks: 'AWAITING IRAN RESPONSE (OMAN)',
+      talks: 'UNDER REVIEW — QATAR MEDIATING IN TEHRAN',
       threat_level: 'CRITICAL',
       war_day: warDay,
-      summary_one_line: 'MOU framework close (May 27); US-Iran destroyer fire exchange (May 27); IRGC claims 25 vessels passed Tuesday; $24B Iran asset release proposed',
+      summary_one_line: 'Jun 9: US struck ~20 Iran air-defense/radar sites near Hormuz; Jun 10: Iran hit US Al-Azraq base (Jordan) + Kuwait & Bahrain, US says nearly all intercepted; Trump warns Iran will pay the price',
     },
     stats: {
       vessels_trapped: 'HUNDREDS',
       seafarers_trapped: '20,000+',
       oil_brent: null,
       oil_wti: null,
+      ships_fired_on: 'JUN 9-10 US/IRAN EXCHANGE — BASES HIT, FEW CIVILIAN SHIPS',
+      tankers_crossed: 'CONTESTED — LANE EFFECTIVELY CLOSED ~102 DAYS',
+      ships_seized: 'NONE REPORTED (24H)',
       us_forces_theater: '90,000+',
       insurance_premium_multiplier: '20x',
     },
@@ -874,8 +927,23 @@ function buildOpFreedomStatus(intel) {
   return {
     name: 'Operation Project Freedom',
     status: 'PAUSED',
-    detail: 'Launched May 4 by CENTCOM. Paused May 5 for Iran deal negotiations. Trump threatens resumption.',
+    detail: 'CENTCOM blockade-enforcement posture ongoing. Fragile, unsigned ceasefire; escalation risk remains high after Jun 7-8 exchange.',
     color: threat === 'CRITICAL' ? 'red' : 'orange',
+  };
+}
+
+function buildDefaultStatus(warDay) {
+  return {
+    ceasefire: 'FRAGILE',
+    hormuz: 'CONTESTED — LANE EFFECTIVELY CLOSED',
+    blockade: 'PARTIAL — US/IRAN BOTH ENFORCING',
+    talks: 'UNDER REVIEW',
+    threat_level: 'HIGH',
+    war_day: warDay,
+    summary_one_line: 'Iran-US-Israel conflict ongoing with high escalation risk',
+    ships_fired_on: 'NONE CIVILIAN (24H) — JUN 9-10 STRIKES HIT BASES',
+    tankers_crossed: 'CONTESTED LANE — MINIMAL CIVILIAN',
+    ships_seized: 'NONE REPORTED (24H)',
   };
 }
 
@@ -885,6 +953,9 @@ function buildDefaultStats(oil) {
     seafarers_trapped: '20,000+',
     oil_brent: oil?.brent || null,
     oil_wti: oil?.wti || null,
+    ships_fired_on: 'NONE CIVILIAN (24H) — JUN 9-10 STRIKES HIT BASES',
+    tankers_crossed: 'CONTESTED LANE — MINIMAL CIVILIAN',
+    ships_seized: 'NONE REPORTED (24H)',
     us_forces_theater: '90,000+',
     insurance_premium_multiplier: '20x',
   };
@@ -892,13 +963,13 @@ function buildDefaultStats(oil) {
 
 function buildDefaultTicker() {
   return [
-    '⚡ US F/A-18s strafe Iranian tankers in Gulf of Oman — May 9, 2026',
-    '🚢 Iran seizes Ocean Koi tanker — IRGC "special operation" in Gulf of Oman',
-    '⏸ Operation Project Freedom PAUSED — Trump threatens resumption if Iran stalls',
-    '🕊 Ceasefire nominally holds despite active exchanges of fire — May 9',
-    '📜 Iran imposing new Hormuz transit rules — declares itself strait "regulator"',
-    '🔒 Bahrain detains 41 alleged IRGC operatives — May 9, 2026',
-    '🛢 Brent crude elevated — shipping insurance 20x normal rates',
-    '🌐 US awaiting Iran response to peace proposal — Oman mediation ongoing',
+    '🟥 US Apache down off Oman Jun 8 — crew saved by Navy drone, cause UNCONFIRMED, Iran claims nothing',
+    '💥 First Israel-Iran direct exchange since April ceasefire — Jun 7-8, both paused after',
+    '⚓ Strait of Hormuz effectively closed ~101 days',
+    '📜 60-day US-Iran Hormuz MOU negotiated but UNSIGNED — both sides contradict terms',
+    '✈️ US losses mount: 5+ jets, 7 KC-135s, SAR heli, 2+ dozen drones, now 1 Apache',
+    '🛢 Brent ~$92-93 after >$97 intraday spike Monday',
+    '🕊 Netanyahu: "the fire has ceased" — Iran warns it resumes if Israel hits S. Lebanon',
+    '🌐 Trump says deal "2-3 days" away — a claim repeated for ~2 months',
   ];
 }

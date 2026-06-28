@@ -616,10 +616,10 @@ async function fetchOilPrices(env) {
   } catch(e) { console.warn('[fetchOilPrices] AV WTI error:', e.message); }
 
   // Strategy 3: yfin self-hosted worker (REAL Brent BZ=F + WTI CL=F) — replaces broken BNO*3.1 proxy.
-  // Fixed by Bumboclaat 2026-06-09: old BNO*3.1 produced fabricated ~$160 Brent. quote.YOUR-DOMAIN.example wraps Yahoo v8/chart.
+  // Fixed by Bumboclaat 2026-06-09: old BNO*3.1 produced fabricated ~$160 Brent. quote.ptsdtree.com wraps Yahoo v8/chart.
   if ((!oil.brent || !oil.wti) && env.YFIN_API_KEY) {
     try {
-      const r = await fetch('https://quote.YOUR-DOMAIN.example/q?symbols=BZ%3DF,CL%3DF', { headers: { 'X-API-Key': env.YFIN_API_KEY } });
+      const r = await fetch('https://quote.ptsdtree.com/q?symbols=BZ%3DF,CL%3DF', { headers: { 'X-API-Key': env.YFIN_API_KEY } });
       if (r.ok) {
         const d = await r.json();
         const bz = d?.quotes?.['BZ=F'];
@@ -867,7 +867,7 @@ async function sendTelegramAlert(env, html) {
     await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: env.TELEGRAM_CHAT_ID, text: html, parse_mode: 'HTML' }),
+      body: JSON.stringify({ chat_id: REDACTED, text: html, parse_mode: 'HTML' }),
     });
   } catch(e) { console.warn('[sendTelegramAlert]', e.message); }
 }

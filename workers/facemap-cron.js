@@ -3,7 +3,7 @@
 // DB: facemap-db (evilempire-db reused) | Worker: facemap-cron
 
 const ACCOUNT_ID = '91e3df7c6e6ad68916abed8239621648';
-const PETE_TELEGRAM_ID = 'ID_REDACTED';
+const PETE_TELEGRAM_ID = '1484600451403091981';
 
 const FACEREC_VENDORS = [
   'clearview', 'idemia', 'nec corporation', 'veritone', 'vigilant',
@@ -211,8 +211,8 @@ async function sendWeeklyDigest(env, newContracts, foias, newsCount) {
 // ─── TELEGRAM ERROR ALERT ─────────────────────────────────────────────────────
 async function sendTelegramAlert(env, msg, prefix) {
   try {
-    const BOT  = (env && env.TELEGRAM_BOT_TOKEN) || 'TELEGRAM_BOT_TOKEN_REDACTED';
-    const CHAT = (env && env.TELEGRAM_PETE_ID)   || 'ID_REDACTED';
+    const BOT  = (env && env.TELEGRAM_BOT_TOKEN) || "__REDACTED_TG_BOT__";
+    const CHAT = (env && env.TELEGRAM_PETE_ID)   || '1484600451403091981';
     const tag  = prefix || 'WORKER';
     await fetch(`https://api.telegram.org/bot${BOT}/sendMessage`, {
       method: 'POST',
@@ -248,7 +248,7 @@ export default {
     // ── SMOKE TEST ───────────────────────────────────────────────────────────
     if (url.pathname === '/smoke-test' && request.method === 'POST') {
       const _auth = request.headers.get('Authorization') || '';
-      if (_auth !== 'Bearer REDACTED') return Response.json({ ok: false, error: 'unauthorized' }, { status: 401 });
+      if (_auth !== 'Bearer smoke-9f8e7d6c5b4a3f2e1d0c') return Response.json({ ok: false, error: 'unauthorized' }, { status: 401 });
       const _t0 = Date.now();
       return Response.json({ ok: true, elapsed_ms: Date.now() - _t0, worker: 'facemap-cron' });
     }

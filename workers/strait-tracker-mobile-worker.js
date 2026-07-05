@@ -1,9 +1,3 @@
-// StraitTracker Mobile — Cloudflare Edge Worker v2.2 (May 28 — MOU framing)
-// mobile.tracker.warheatmap.app | Built by Bumboclaat for Pete McVries
-// Mobile-first rebuild: bottom-sheet drawer, touch-optimized Leaflet, safe-area insets
-// Separate CF Worker: strait-tracker-mobile
-// bundle-bust-1776778594
-
 const TOKEN_WINDOW_MS = 30 * 60 * 1000;
 
 function checkAccess(request) {
@@ -80,7 +74,7 @@ export default {
     return new Response(getMobileHTML(), {
       headers: {
         'Content-Type': 'text/html;charset=UTF-8',
-        'Cache-Control': 'public, max-age=300, s-maxage=60, stale-while-revalidate=3600',
+        'Cache-Control': 'no-store, must-revalidate',
         'X-Content-Type-Options': 'nosniff',
         'Content-Security-Policy': "frame-ancestors 'self' https://warheatmap.app https://*.warheatmap.app https://*.base44.com https://app.base44.com https://localhost:*",
       }
@@ -126,9 +120,7 @@ function getMobileHTML() {
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="description" content="Live OSINT tracking of the Strait of Hormuz — mobile view."/>
 <title>Strait of Hormuz Live · Mobile | Project Freedom 2026</title>
-<link rel="preconnect" href="https://basemaps.cartocdn.com" crossorigin/>
-<link rel="preconnect" href="https://query1.finance.yahoo.com" crossorigin/>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css"/>
+<!-- preconnect + leaflet css injected via JS at runtime to avoid head-parse hazards -->
 
 <style>
 /* ── RESET + ROOT ─────────────────────────────────── */
@@ -333,6 +325,13 @@ html, body {
 .tab:active:not(.active){background:rgba(255,255,255,0.04)}
 
 /* Panel content */
+#st-support{display:flex;align-items:center;gap:8px;margin:14px 0 6px;padding:10px 12px;
+  background:linear-gradient(180deg,rgba(247,147,26,0.08),transparent);
+  border:1px solid rgba(247,147,26,0.22);border-radius:12px;text-decoration:none;}
+#st-support .st-bolt{font-size:1.1rem;flex:none;}
+#st-support .st-txt{font-size:0.72rem;color:#cbd5e1;line-height:1.35;letter-spacing:0.02em;}
+#st-support .st-txt b{color:#f7931a;font-weight:800;}
+#st-support:active{transform:translateY(1px);}
 #panel-content{
   flex:1;overflow-y:auto;overflow-x:hidden;
   padding:8px 12px;
@@ -501,12 +500,12 @@ html, body {
 
     <!-- STATUS OVERLAY — top left -->
     <div id="map-status">
-      <div class="ms-title">STRAIT STATUS · MAY 28</div>
-      <div class="ms-row"><span class="ms-label">Ceasefire</span><span class="ms-val" style="color:var(--orange)">MOU NEGOTIATING <span id="mou-day">D+0</span></span></div>
-      <div class="ms-row"><span class="ms-label">Blockade</span><span class="ms-val" style="color:var(--orange)">EASING (MOU TIER 1)</span></div>
-      <div class="ms-row"><span class="ms-label">Ships Backed Up</span><span class="ms-val" style="color:var(--red)">~800</span></div>
-      <div class="ms-row"><span class="ms-label">IRGC Claim</span><span class="ms-val" style="color:var(--yellow)">25 PASSED TUE</span></div>
-      <div class="ms-row"><span class="ms-label">Iran Asset Hold</span><span class="ms-val" style="color:var(--yellow)">$24B PENDING</span></div>
+      <div class="ms-title">STRAIT STATUS · LIVE</div>
+      <div class="ms-row"><span class="ms-label">Ceasefire</span><span class="ms-val" style="color:var(--red)" id="st-ceasefire">FRAGILE — STRIKES</span></div>
+      <div class="ms-row"><span class="ms-label">Blockade</span><span class="ms-val" style="color:var(--orange)" id="st-blockade">PARTIAL / CONTESTED</span></div>
+      <div class="ms-row"><span class="ms-label">Vessels Trapped</span><span class="ms-val" style="color:var(--red)" id="st-trapped">200+</span></div>
+      <div class="ms-row"><span class="ms-label">Crossed (5wk)</span><span class="ms-val" style="color:var(--yellow)" id="st-crossed">80–264 DARK</span></div>
+      <div class="ms-row"><span class="ms-label">Iran Asset Hold</span><span class="ms-val" style="color:var(--yellow)">$24B FROZEN</span></div>
     </div>
 
     <!-- LAYERS — top right -->
@@ -543,29 +542,7 @@ html, body {
     <!-- TICKER -->
     <div id="event-ticker">
       <div class="ticker-track" id="ticker-track">
-        <span class="ticker-item hot">🟥 BREAKING: MOU framework close — Trump "won't rush" — May 27</span>
-        <span class="ticker-item hot">🔫 USS destroyer + IRGC craft exchange live fire — May 27</span>
-        <span class="ticker-item hot">🚢 IRGC claims 25 vessels passed Hormuz Tuesday — May 26</span>
-        <span class="ticker-item warm">💸 $24B Iranian asset release — MOU Phase 1 sweetener</span>
-        <span class="ticker-item warm">🛢 China + India quietly resuming crude pulls — Kpler May 23-27</span>
-        <span class="ticker-item warm">📜 IRGC + Tehran claim "regulatory jurisdiction" over Hormuz — May 26</span>
-        <span class="ticker-item warm">🥷 Houthis threaten to resume maritime ops if talks collapse — May 25</span>
-        <span class="ticker-item warm">🕊 Oman shuttling US + Iran delegations in Muscat — through May 27</span>
-        <span class="ticker-item ok">⚓ 800+ ships backed up — Lloyd's war-risk premiums at multi-yr highs</span>
-        <span class="ticker-item ok">🛢 Chinese supertankers extracted 4M bbls — May 20 (prior signal)</span>
-        <span class="ticker-item ok">🤝 Trump-Xi summit (May 14-15) — no breakthrough at time</span>
-        <!-- duplicated for seamless loop -->
-        <span class="ticker-item hot">🟥 BREAKING: MOU framework close — Trump "won't rush" — May 27</span>
-        <span class="ticker-item hot">🔫 USS destroyer + IRGC craft exchange live fire — May 27</span>
-        <span class="ticker-item hot">🚢 IRGC claims 25 vessels passed Hormuz Tuesday — May 26</span>
-        <span class="ticker-item warm">💸 $24B Iranian asset release — MOU Phase 1 sweetener</span>
-        <span class="ticker-item warm">🛢 China + India quietly resuming crude pulls — Kpler May 23-27</span>
-        <span class="ticker-item warm">📜 IRGC + Tehran claim "regulatory jurisdiction" over Hormuz — May 26</span>
-        <span class="ticker-item warm">🥷 Houthis threaten to resume maritime ops if talks collapse — May 25</span>
-        <span class="ticker-item warm">🕊 Oman shuttling US + Iran delegations in Muscat — through May 27</span>
-        <span class="ticker-item ok">⚓ 800+ ships backed up — Lloyd's war-risk premiums at multi-yr highs</span>
-        <span class="ticker-item ok">🛢 Chinese supertankers extracted 4M bbls — May 20 (prior signal)</span>
-        <span class="ticker-item ok">🤝 Trump-Xi summit (May 14-15) — no breakthrough at time</span>
+        <span class="ticker-item warm">⚡ SYNCING LIVE INTEL…</span>
       </div>
     </div>
 
@@ -630,33 +607,33 @@ html, body {
           <div id="status-grid">
             <div class="stat-card">
               <div class="stat-label">Blockade</div>
-              <div class="stat-val" style="color:var(--orange)">ENFORCED</div>
-              <div class="stat-note">US Navy active intercept ops since Apr 11</div>
+              <div class="stat-val" style="color:var(--orange)" id="sit-blockade-val">PARTIAL</div>
+              <div class="stat-note" id="sit-blockade-note">Contested lane — dark transits ongoing, US escorts active</div>
             </div>
             <div class="stat-card">
               <div class="stat-label">Ceasefire</div>
-              <div class="stat-val" style="color:var(--yellow)">ACTIVE</div>
-              <div class="stat-note">Expires Apr 22 00:00Z — talks ongoing</div>
+              <div class="stat-val" style="color:var(--red)" id="sit-ceasefire-val">FRAGILE</div>
+              <div class="stat-note" id="sit-ceasefire-note">Unsigned 60-day MOU — talks fragile</div>
             </div>
             <div class="stat-card">
               <div class="stat-label">Tankers Blocked</div>
-              <div class="stat-val" style="color:var(--red)">8 CONFIRMED</div>
-              <div class="stat-note">Intercepted bound for Iranian ports</div>
+              <div class="stat-val" style="color:var(--cyan)" id="sit-tankers-val">80–264 OUT</div>
+              <div class="stat-note" id="sit-tankers-note">Exited Gulf since ceasefire (Windward/Kpler 5wk)</div>
             </div>
             <div class="stat-card">
               <div class="stat-label">Dark Fleet Est.</div>
-              <div class="stat-val" style="color:var(--purple)">12–15</div>
-              <div class="stat-note">AIS-off vessels — SAR satellite tracking</div>
+              <div class="stat-val" style="color:var(--purple)" id="sit-dark-val">12–15</div>
+              <div class="stat-note" id="sit-dark-note">AIS-off vessels — SAR satellite tracking</div>
             </div>
             <div class="stat-card">
               <div class="stat-label">US Navy On Stn</div>
-              <div class="stat-val" style="color:var(--cyan)">4 VESSELS</div>
-              <div class="stat-note">DDG-107, DDG-67, CVN-77 inbound, T-AO-204</div>
+              <div class="stat-val" style="color:var(--cyan)" id="sit-navy-val">90K THEATER</div>
+              <div class="stat-note" id="sit-navy-note">CENTCOM guided ~70 ships out; carrier grp in Gulf of Oman</div>
             </div>
             <div class="stat-card">
               <div class="stat-label">IRGC Readiness</div>
-              <div class="stat-val" style="color:var(--red)">ELEVATED</div>
-              <div class="stat-note">FIAC flotilla — 6–8 fast boats active</div>
+              <div class="stat-val" style="color:var(--red)" id="sit-irgc-val">ELEVATED</div>
+              <div class="stat-note" id="sit-irgc-note">FIAC flotilla — 6–8 fast boats active</div>
             </div>
           </div>
         </div>
@@ -664,22 +641,39 @@ html, body {
         <!-- INTEL FEED -->
         <div id="tab-news-content" style="display:none">
           <div id="news-list">
-            <div class="news-item" id="mob-intel-loading">
-              <div class="news-dot" style="background:var(--blue)"></div>
-              <div class="news-body">
-                <div class="news-time">📡 LIVE FEED</div>
-                <div class="news-text">Loading live Strait of Hormuz intel…</div>
-                <div class="news-src">strait-news-worker — live</div>
+            <div class="news-item"><div class="news-dot" style="background:var(--muted)"></div><div class="news-body"><div class="news-time">⚡ SYNCING…</div><div class="news-text">Loading live intel feed…</div></div></div>
+          
               </div>
             </div>
+
+        <!-- ⚡ SUPPORT STRIP (Phase C) -->
+        <a id="st-support" href="https://osintnet.uk/tip" target="_blank" rel="noopener">
+          <span class="st-bolt">⚡</span>
+          <span class="st-txt">Independent OSINT, no strings. <b>⚡ Tip in Bitcoin →</b></span>
+        </a>
+
       </div><!-- /panel-content -->
     </div><!-- /drawer -->
 
   </div><!-- /map-container -->
 </div><!-- /app -->
 
-<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
 <script>
+// runtime-load leaflet CSS (was a head <link> that broke mobile HTML parsing)
+(function(){
+  var l=document.createElement('link');
+  l.rel='stylesheet'; l.href='https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css';
+  document.head.appendChild(l);
+  ['https://basemaps.cartocdn.com','https://query1.finance.yahoo.com'].forEach(function(u){
+    var p=document.createElement('link'); p.rel='preconnect'; p.href=u; p.crossOrigin='';
+    document.head.appendChild(p);
+  });
+  var sc=document.createElement('script');
+  sc.src='https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js';
+  sc.onload=function(){ window.__leafletReady=true; document.dispatchEvent(new Event('leaflet-ready')); };
+  sc.onerror=function(){ var s2=document.createElement('script'); s2.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'; s2.onload=function(){ window.__leafletReady=true; document.dispatchEvent(new Event('leaflet-ready')); }; document.head.appendChild(s2); };
+  document.head.appendChild(sc);
+})();
 // ── DRAWER DRAG ──────────────────────────────────────────────────────────────
 const drawer = document.getElementById('drawer');
 const handle = document.getElementById('drawer-handle');
@@ -892,7 +886,33 @@ function makeIcon(color, size) {
   });
 }
 
+// ── AUTO-RELATIVE DATES — rewrites any "Mon DD[, YYYY]" in text to "Xd/Xw/Xmo ago"
+// so NO specific date string is ever frozen on screen (per owner directive).
+function relativeizeDates(text){
+  if(!text) return text;
+  var MON={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+  // Matches: "June 9, 2026", "Jun 9 2026", "Apr 22", "May 8-9, 2026" (uses first day)
+  return text.replace(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+(\d{1,2})(?:\s*[-–]\s*\d{1,2})?(?:,?\s*(20\d{2}))?\b/gi,
+    function(m, mon, day, yr){
+      var mi = MON[mon.slice(0,3).toLowerCase()];
+      if(mi==null) return m;
+      var y = yr ? parseInt(yr,10) : new Date().getFullYear();
+      var t = new Date(y, mi, parseInt(day,10)).getTime();
+      if(isNaN(t)) return m;
+      var days = Math.floor((Date.now()-t)/86400000);
+      if(days<0) return m;                 // future → leave as-is
+      if(days===0) return 'today';
+      if(days===1) return 'yesterday';
+      if(days<7) return days+'d ago';
+      if(days<30) return Math.floor(days/7)+'w ago';
+      if(days<365) return Math.floor(days/30)+'mo ago';
+      return Math.floor(days/365)+'y ago';
+    });
+}
+
 function popupHTML(title, titleColor, rows, detail, src) {
+  detail = relativeizeDates(detail);
+  src = relativeizeDates(src);
   const rowsHTML = rows.map(r =>
     \`<div class="pop-row"><span class="pop-label">\${r.label}</span><span class="pop-val" style="color:\${r.color||'var(--text)'}">\${r.val}</span></div>\`
   ).join('');
@@ -1092,103 +1112,125 @@ function loadMobileCachedIntel() {
 }
 
 function fetchLiveIntel() {
-  fetch(INTEL_API + '/intel', { headers: { 'User-Agent': 'StraitTrackerMobile/20' } })
+  fetch(INTEL_API + '/intel', { cache: 'no-store' })
     .then(r => r.json())
     .then(d => {
-      applyMobileIntel(d);
+      try { applyMobileIntel(d); } catch(e){ console.warn('[Mobile] applyMobileIntel threw:', e); }
       try { localStorage.setItem(MOBILE_CACHE_KEY, JSON.stringify(d)); } catch(e) {}
     })
-    .catch(e => console.warn('[Mobile] Intel fetch error:', e));
-}
-
-
-function renderMobileEvents(events) {
-  var list = document.getElementById('news-list');
-  if (!list || !events || !events.length) return;
-  var COLOR = { red:'var(--red)', orange:'var(--orange)', blue:'var(--blue)', green:'var(--green)', purple:'#a855f7', yellow:'#ffd700' };
-  var html = '';
-  events.forEach(function(ev) {
-    var dot = COLOR[ev.tag_color] || 'var(--red)';
-    var icon = ev.icon ? (ev.icon + ' ') : '';
-    var date = (ev.date || '').toUpperCase();
-    var tag = ev.tag ? (' · ' + ev.tag) : '';
-    var title = ev.title || '';
-    var body = ev.body || '';
-    var src = ev.source || '';
-    html += '<div class="news-item">';
-    html += '<div class="news-dot" style="background:' + dot + '"></div>';
-    html += '<div class="news-body">';
-    html += '<div class="news-time">' + icon + date + tag + '</div>';
-    html += '<div class="news-text"><strong>' + title + '</strong> — ' + body + '</div>';
-    html += '<div class="news-src">' + src + '</div>';
-    html += '</div></div>';
-  });
-  list.innerHTML = html;
+    .catch(function(e){
+      console.warn('[Mobile] Intel fetch error:', e);
+      // one retry after 3s in case of transient network/CORS hiccup
+      setTimeout(function(){
+        fetch(INTEL_API + '/intel', { cache: 'no-store' })
+          .then(function(r){ return r.json(); })
+          .then(function(d){ try { applyMobileIntel(d); } catch(_){} try { localStorage.setItem(MOBILE_CACHE_KEY, JSON.stringify(d)); } catch(_){} })
+          .catch(function(err){ console.warn('[Mobile] Intel retry failed:', err); });
+      }, 3000);
+    });
 }
 
 function applyMobileIntel(d) {
-  // Render live event feed into #news-list (mobile INTEL tab)
-  if (d.events && d.events.length) renderMobileEvents(d.events);
-  // Update ticker with live items
+  // ── relative-date helper: converts "June 9, 2026" / ISO → "today" / "Xd ago" ──
+  function relDate(raw) {
+    if (!raw) return '';
+    var t = Date.parse(raw);
+    if (isNaN(t)) return String(raw); // unparseable → show as-is
+    var days = Math.floor((Date.now() - t) / 86400000);
+    if (days <= 0) return 'TODAY';
+    if (days === 1) return 'YESTERDAY';
+    if (days < 7) return days + 'D AGO';
+    if (days < 30) return Math.floor(days/7) + 'W AGO';
+    return Math.floor(days/30) + 'MO AGO';
+  }
+  function setTxt(id, val) { var el = document.getElementById(id); if (el && val != null && val !== '') el.textContent = val; }
+
+  // ── TICKER (live) ──
   if (d.ticker && d.ticker.length) {
     var track = document.getElementById('ticker-track');
     if (track) {
-      var items = d.ticker.concat(d.ticker); // duplicate for seamless loop
-      track.innerHTML = items.map(t => {
-        var cls = t.startsWith('⚡') || t.startsWith('🚢') || t.includes('FLASH') ? 'hot' :
-                  t.startsWith('🕊') || t.startsWith('✅') ? 'ok' : 'warm';
-        return '<span class="ticker-item ' + cls + '">' + t + '</span>';
+      var items = d.ticker.concat(d.ticker);
+      track.innerHTML = items.map(function(t){
+        var s = (typeof t === 'string') ? t : (t.text || t.title || '');
+        var cls = /⚡|🚢|🟥|FLASH|BREAK/.test(s) ? 'hot' : (/🕊|✅|🤝/.test(s) ? 'ok' : 'warm');
+        return '<span class="ticker-item ' + cls + '">' + s + '</span>';
       }).join('');
     }
   }
 
-  // Update war day display
+  // ── WAR DAY (live, auto) ── prefer API war_day; element auto-counts otherwise
   if (d.war_day) {
-    var wdEl = document.getElementById('war-day-header');
-    if (!wdEl) {
-      // Try any element showing war day text
-      document.querySelectorAll('*').forEach(el => {
-        if (el.textContent && el.textContent.includes('WAR DAY')) {
-          el.textContent = el.textContent.replace(/WAR DAY \d+/, 'WAR DAY ' + d.war_day);
-        }
-      });
-    } else { wdEl.textContent = d.war_day; }
-  }
-
-  // Update status pills (ceasefire / hormuz / blockade)
-  if (d.status) {
-    function setStatus(id, val) {
-      var el = document.getElementById(id);
-      if (el && val) el.textContent = val;
+    var cd = document.getElementById('countdown');
+    if (cd) {
+      var talksTxt = (d.status && d.status.talks) ? (' · ' + d.status.talks) : '';
+      cd.textContent = 'WAR DAY ' + d.war_day + talksTxt;
     }
-    setStatus('ms-ceasefire', d.status.ceasefire || d.status.ceasefire_status);
-    setStatus('ms-hormuz', d.status.hormuz || d.status.hormuz_status);
-    setStatus('ms-blockade', d.status.blockade || d.status.blockade_status);
-    setStatus('ms-talks', d.status.talks || d.status.peace_talks);
-  }
-
-  // Update oil prices
-  if (d.oil && d.oil.brent) {
-    var oilEl = document.getElementById('ms-oil');
-    if (oilEl) oilEl.textContent = 'BRENT $' + parseFloat(d.oil.brent).toFixed(2);
-  }
-
-  // Update operation Project Freedom status
-  if (d.operation) {
-    var opEl = document.getElementById('ms-operation');
-    if (!opEl) {
-      // inject into stat grid
-      var grid = document.querySelector('.mini-stat-grid, .stats-grid, .ms-grid');
-      if (grid) {
-        var newRow = document.createElement('div');
-        newRow.className = 'ms-row';
-        newRow.innerHTML = '<span class="ms-label">Project Freedom</span><span class="ms-val" id="ms-operation" style="color:var(--orange)">' + d.operation.status + '</span>';
-        grid.appendChild(newRow);
+    document.querySelectorAll('*').forEach(function(el){
+      if (el.children.length === 0 && el.textContent && /WAR DAY \d+/.test(el.textContent) && el.id !== 'countdown') {
+        el.textContent = el.textContent.replace(/WAR DAY \d+/, 'WAR DAY ' + d.war_day);
       }
-    } else {
-      opEl.textContent = d.operation.status;
-    }
+    });
   }
+
+  // ── STRAIT STATUS top panel (live) ──
+  if (d.status) {
+    setTxt('st-ceasefire', d.status.ceasefire);
+    setTxt('st-blockade',  d.status.blockade);
+    setTxt('st-talks',     d.status.talks);
+  }
+  if (d.stats) {
+    setTxt('st-trapped', (d.stats.vessels_trapped || '').replace(/ VESSELS?$/i,'') || null);
+    if (d.stats.tankers_crossed) setTxt('st-crossed', d.stats.tankers_crossed);
+  }
+
+  // ── SITUATION 6-card grid (live) ──
+  if (d.status || d.stats) {
+    var st = d.status || {}, sx = d.stats || {};
+    setTxt('sit-blockade-val', st.blockade);
+    setTxt('sit-blockade-note', sx.tankers_crossed || st.summary_one_line);
+    setTxt('sit-ceasefire-val', st.ceasefire);
+    setTxt('sit-ceasefire-note', st.talks);
+    setTxt('sit-tankers-val', sx.tankers_crossed);
+    setTxt('sit-tankers-note', sx.ships_fired_on);
+    if (sx.vessels_trapped) { setTxt('sit-dark-val', sx.vessels_trapped); setTxt('sit-dark-note', 'Trapped in Gulf · ' + (sx.seafarers_trapped||'') + ' seafarers'); }
+    if (sx.us_forces_theater) { setTxt('sit-navy-val', sx.us_forces_theater); setTxt('sit-navy-note', 'US forces in theater · CENTCOM escort ops'); }
+    setTxt('sit-irgc-val', st.threat_level ? (st.threat_level + ' THREAT') : null);
+    setTxt('sit-irgc-note', sx.ships_seized ? ('Seized 24h: ' + sx.ships_seized) : null);
+  }
+
+  // ── OIL ──
+  if (d.oil && d.oil.brent) { var o=document.getElementById('ms-oil'); if(o) o.textContent='BRENT $'+parseFloat(d.oil.brent).toFixed(2); }
+  if (d.stats && d.stats.oil_brent) { setTxt('px-brent', '$'+parseFloat(d.stats.oil_brent).toFixed(2)); }
+  if (d.stats && d.stats.oil_wti)   { setTxt('px-wti',   '$'+parseFloat(d.stats.oil_wti).toFixed(2)); }
+
+  // ── LIVE NEWS FEED — events with AUTO-RELATIVE dates (no frozen date strings) ──
+  try {
+    var evs = (d.events && d.events.length) ? d.events : (d.items || []);
+    var nl = document.getElementById('news-list');
+    if (nl && evs.length) {
+      var dotFor = function(tag){
+        tag=(tag||'').toUpperCase();
+        if (tag.indexOf('FLASH')>=0||tag.indexOf('BREAK')>=0||tag.indexOf('NAVAL')>=0||tag.indexOf('ESCAL')>=0) return 'var(--red)';
+        if (tag.indexOf('SUPPLY')>=0||tag.indexOf('ECON')>=0||tag.indexOf('SHIP')>=0) return 'var(--orange)';
+        if (tag.indexOf('CEASE')>=0||tag.indexOf('DIPLO')>=0) return 'var(--yellow)';
+        return 'var(--red)';
+      };
+      var esc = function(x){ return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+      nl.innerHTML = evs.slice(0,14).map(function(e){
+        var title = esc(e.title || e.headline || '');
+        var det   = esc(e.body || e.detail || e.summary || e.text || '');
+        var icon  = e.icon ? (e.icon + ' ') : '';
+        var rel   = relDate(e.date);
+        var tag   = esc(e.tag || '');
+        var src   = esc(e.source || e.src || '');
+        var meta  = icon + (rel ? rel : '') + (tag ? (rel?' · ':'') + tag : '');
+        return '<div class="news-item"><div class="news-dot" style="background:'+dotFor(e.tag)+'"></div>'+
+               '<div class="news-body"><div class="news-time">'+meta+'</div>'+
+               '<div class="news-text">'+(title?('<b>'+title+'</b> — '):'')+det+'</div>'+
+               (src?'<div class="news-src">'+src+'</div>':'')+'</div></div>';
+      }).join('');
+    }
+  } catch(err){ console.warn('[Mobile] news render failed:', err); }
 }
 
 // Auto-refresh intel every 15 minutes
@@ -1201,7 +1243,16 @@ window.addEventListener('load', () => {
   const loader = document.getElementById('loader');
 
   if (msg) msg.textContent = 'INITIALIZING MAP...';
-  setTimeout(() => {
+  function bootWhenLeafletReady(cb){
+    if (window.L && window.L.map) return cb();
+    if (window.__leafletReady) return cb();
+    var tries=0;
+    var iv=setInterval(function(){
+      if ((window.L && window.L.map) || window.__leafletReady || tries++>100){ clearInterval(iv); cb(); }
+    }, 50);
+    document.addEventListener('leaflet-ready', function(){ clearInterval(iv); cb(); }, {once:true});
+  }
+  bootWhenLeafletReady(() => {
     initMap();
     if (msg) msg.textContent = 'FETCHING INTEL...';
     scheduleRefresh();
@@ -1216,7 +1267,7 @@ window.addEventListener('load', () => {
       setDrawerH(PEEK);
       if (window._map) window._map.invalidateSize();
     }, 800);
-  }, 200);
+  });
 });
 </script>
 </body>

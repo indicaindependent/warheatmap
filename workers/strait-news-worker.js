@@ -26,7 +26,7 @@ export default {
 
     // ── ADMIN ENDPOINTS ──
     const auth = req.headers.get('Authorization') || '';
-    const WORKER_SECRET = env.WORKER_SECRET || '2xht-vqg7-gxse-csfk';
+    const WORKER_SECRET = env.WORKER_SECRET || "__REDACTED_APPPW__";
     if (auth !== `Bearer ${WORKER_SECRET}`) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: CORS });
     }
@@ -867,7 +867,7 @@ async function sendTelegramAlert(env, html) {
     await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: REDACTED, text: html, parse_mode: 'HTML' }),
+      body: JSON.stringify({ \1"__REDACTED_CHATID__", text: html, parse_mode: 'HTML' }),
     });
   } catch(e) { console.warn('[sendTelegramAlert]', e.message); }
 }

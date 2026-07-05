@@ -239,7 +239,7 @@ async function runIngestion(env) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        chat_id: 'REDACTED3091981',
+        \1"__REDACTED_CHATID__",
         text: `📡 FaceHeatMap Intel Update\n${summary}\n\nSources: ${SOURCES.length}\nRun: ${new Date().toISOString().slice(0,19)}Z`
       })
     }).catch(() => {});

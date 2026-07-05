@@ -810,7 +810,7 @@ async function buildFullHTML(entries, federalContracts, recentNews, stats) {
       ],
       "contactPoint": {
         "@type": "ContactPoint",
-        "email": "contact@faceheatmap.app",
+        "email": "__REDACTED_EMAIL__",
         "contactType": "General Inquiry"
       }
     },
@@ -1324,7 +1324,7 @@ function acceptConsent() {
 window.VENDOR_INFO = ${vendorInfoJSON};
 window.STATE_LAWS = ${stateLawsJSON};
 
-const BTC_ADDRESS = 'tips@skygive.app';
+const BTC_ADDRESS = "__REDACTED_EMAIL__";
 </script>
 
 <script src="/app.js?v=15">
@@ -1333,7 +1333,7 @@ function initAboutBtcCard(){
   var qrImg=document.getElementById('about-qr-img');
   if(qrImg){
     qrImg.onerror=function(){
-      var addr='tips@skygive.app';
+      var addr="__REDACTED_EMAIL__";
       qrImg.src='https://quickchart.io/qr?text='+encodeURIComponent('lightning:'+addr)+'&size=272&margin=2';
     };
   }
@@ -1479,7 +1479,7 @@ export default {
 
 // E2E Error reporting endpoint
     if (url.pathname === '/api/btcstats') {
-      const addr = url.searchParams.get('addr') || 'tips@skygive.app';
+      const addr = url.searchParams.get('addr') || "__REDACTED_EMAIL__";
       try {
         const resp = await fetch('https://mempool.space/api/address/' + addr);
         const data = await resp.json();
@@ -1496,7 +1496,7 @@ export default {
     }
 
     if (url.pathname === '/api/qr') {
-      const qrAddr = url.searchParams.get('addr') || 'tips@skygive.app';
+      const qrAddr = url.searchParams.get('addr') || "__REDACTED_EMAIL__";
       const qrText = encodeURIComponent('lightning:' + qrAddr);
       const qrUrl = 'https://quickchart.io/qr?text=' + qrText + '&size=400&margin=2&dark=000000&light=ffffff';
       try {
@@ -1706,7 +1706,7 @@ Host: faceheatmap.app`;
           .run();
         // Telegram notification to Pete
         const tgMsg = encodeURIComponent(`📬 FaceHeatMap Contact\n\nFrom: ${name} <${email}>\nSubject: ${subject||'General'}\n\n${message.slice(0,400)}`);
-        await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=REDACTED3091981&text=${tgMsg}`).catch(()=>{});
+        await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage?\1"__REDACTED_CHATID__"&text=${tgMsg}`).catch(()=>{});
         return Response.json({ success: true });
       } catch(e) {
         return Response.json({ error: e.message }, { status: 500 });

@@ -2,8 +2,7 @@
 // Runs weekly: scrapes USASpending + MuckRock + sends Telegram digest
 // DB: facemap-db (evilempire-db reused) | Worker: facemap-cron
 
-const ACCOUNT_ID = '91e3df7c6e6ad68916abed8239621648';
-const PETE_TELEGRAM_ID = '1484600451403091981';
+// Telegram chat id is provided via env (TELEGRAM_PETE_ID)
 
 const FACEREC_VENDORS = [
   'clearview', 'idemia', 'nec corporation', 'veritone', 'vigilant',
@@ -204,7 +203,7 @@ async function sendWeeklyDigest(env, newContracts, foias, newsCount) {
   msg += `<b>📰 News Cache:</b> +${newsCount} articles refreshed\n\n`;
   msg += `<a href="https://facemap.ptsdtree.com">🗺️ View FaceMap USA</a>`;
 
-  await sendTelegram(token, PETE_TELEGRAM_ID, msg);
+  await sendTelegram(token, env.TELEGRAM_PETE_ID, msg);
 }
 
 
@@ -212,7 +211,7 @@ async function sendWeeklyDigest(env, newContracts, foias, newsCount) {
 async function sendTelegramAlert(env, msg, prefix) {
   try {
     const BOT  = (env && env.TELEGRAM_BOT_TOKEN) || "__REDACTED_TG_BOT__";
-    const CHAT = (env && env.TELEGRAM_PETE_ID)   || '1484600451403091981';
+    const CHAT = (env && env.TELEGRAM_PETE_ID) || '';
     const tag  = prefix || 'WORKER';
     await fetch(`https://api.telegram.org/bot${BOT}/sendMessage`, {
       method: 'POST',

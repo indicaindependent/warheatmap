@@ -36,7 +36,13 @@
 
 ## 📋 Changelog
 
-### v6.1 — May 9, 2026 *(Latest)*
+### v6.2 — July 18, 2026 *(Latest)*
+
+- **AI/SEO crawlability**: served-side answer block, FAQ + JSON-LD schema (WebSite, Organization, FAQPage) injected at the origin so AI crawlers and search engines can ground on real content instead of an empty SPA shell.
+- **Bot-prerender pattern**: crawlers receive fully-rendered, structured HTML while human visitors keep the live SPA experience.
+- **Search Console loop**: automated weekly performance reporting to track ranking lift after SEO deploys.
+
+### v6.1 — May 9, 2026
 - 🔧 **CORS fix** — removed `User-Agent` from browser fetch; added `Access-Control-Allow-Headers: *` to strait-news-worker
 - 🔧 **Fixed `updateWarDay` / `forceRefresh` / `refreshPrices`** — functions were called at boot but never defined (caused full UI freeze)
 - 💰 **Daily price cache** — Brent/WTI/BTC now ingested once per day via `localStorage` TTL (24h), not on every page visit
@@ -126,6 +132,14 @@ News Sources → Cloudflare Worker (strait-news-worker)
 ```
 
 ---
+
+### SEO & Crawlability
+
+WarHeatMap is a client-rendered SPA for speed, but AI crawlers and search engines need
+readable HTML. The origin serves a structured **answer block** — an accessible H1, an FAQ,
+a live-event summary, and JSON-LD schema (WebSite, Organization, FAQPage) — so bots can
+ground citations on real content. Human visitors get the full interactive map; crawlers get
+substance. Search performance is tracked on a weekly reporting loop to measure ranking lift.
 
 ## 📁 Repo Structure
 

@@ -647,7 +647,7 @@ html, body {
             </div>
 
         <!-- ⚡ SUPPORT STRIP (Phase C) -->
-        <a id="st-support" href="https://osintnet.uk/tip" target="_blank" rel="noopener">
+        <a id="st-support" href="https://donate.skygive.app/" target="_blank" rel="noopener">
           <span class="st-bolt">⚡</span>
           <span class="st-txt">Independent OSINT, no strings. <b>⚡ Tip in Bitcoin →</b></span>
         </a>

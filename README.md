@@ -24,7 +24,7 @@
 <br/>
 
 ![Status](https://img.shields.io/badge/Status-🟢_Live-22c55e?style=flat-square)
-![Conflicts](https://img.shields.io/badge/Active_Conflicts_Tracked-15+-ef4444?style=flat-square)
+![Events](https://img.shields.io/badge/Verified_Events_Tracked-4,000+-ef4444?style=flat-square)
 ![Coverage](https://img.shields.io/badge/Coverage-Global-6d28d9?style=flat-square)
 ![Speed](https://img.shields.io/badge/Response_Time-<50ms-0ea5e9?style=flat-square)
 ![VPDLNY](https://img.shields.io/badge/VPDLNY-Community_Tool-8B0000?style=flat-square)
@@ -36,7 +36,14 @@
 
 ## 📋 Changelog
 
-### v6.2 — July 18, 2026 *(Latest)*
+### v6.5 — August 13, 2026 *(Latest)*
+
+- **Dynamic deep-link grammar v2** — every shareable/OG card can now steer the app precisely: `?country=X` focuses the map, `?feed-country=X` focuses and loads that country's feed, `?tag=<category>` filters the feed to a category, `?events=critical` jumps to critical-only, and `?criticalevents-country=X` combines both. Powers click-backs from the OSINT auto-post threads.
+- **OSINT auto-posting desks** — WarDesk (daily conflict brief), SpyDesk (surveillance), and WarChest (markets-at-war) compose OG-card threads to Bluesky and deep-link back into the exact map view for each story.
+- **Category tag bar** — filter the live map/feed by event type (AIRSTRIKE, GROUND, NAVAL, MISSILE, EXPLOSION, TERRORISM, CYBER, NUCLEAR, DIPLOMACY, SANCTIONS, INFRA, and more) plus STATS and FEED tabs.
+- **Scale** — now plotting 4,000+ verified events across every active theatre.
+
+### v6.2 — July 18, 2026
 
 - **AI/SEO crawlability**: served-side answer block, FAQ + JSON-LD schema (WebSite, Organization, FAQPage) injected at the origin so AI crawlers and search engines can ground on real content instead of an empty SPA shell.
 - **Bot-prerender pattern**: crawlers receive fully-rendered, structured HTML while human visitors keep the live SPA experience.
@@ -84,7 +91,7 @@ Built for researchers, journalists, activists, and anyone tracking global instab
 | 💾 **Event Archive** | D1 SQLite database of all tracked incidents |
 | 📊 **Escalation Index** | Real-time tension scoring per conflict zone |
 | 🚢 **Naval OSINT** | Ship tracking, blockade status, tanker incident log |
-| ₿ **BTC Support** | Fund anonymously — on-chain, no accounts |
+| 🏷️ **Category Filters** | Filter the map & feed by event type — airstrike, naval, missile, cyber, nuclear, diplomacy, sanctions, and more |
 | 📱 **Mobile-First** | Full responsive layout with dedicated mobile worker |
 
 ---
@@ -98,7 +105,7 @@ Built for researchers, journalists, activists, and anyone tracking global instab
 🇸🇩 Sudan                — RSF vs SAF | Humanitarian corridor status
 🇨🇩 DRC / M23            — Eastern Congo offensive tracking
 🇲🇲 Myanmar              — Junta vs. resistance | KIO/KNLA operations
-🌍 + 9 more active zones
+🌍 + many more active theatres · 4,000+ verified events
 ```
 
 ---

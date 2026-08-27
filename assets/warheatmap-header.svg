@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="262" viewBox="0 0 1100 262" role="img" aria-labelledby="wt wd">
+<title id="wt">WarHeatMap — live global conflict intelligence platform</title>
+<desc id="wd">WarHeatMap, a live global conflict intelligence platform, reachable at warheatmap.app. Built on Cloudflare Workers with D1 SQLite, Cloudflare KV, Leaflet.js, the AT Protocol and JavaScript ES2024, released under the MIT licence. The live status shown was measured by HTTP request at 2026-08-27 17:09 ET, not asserted. No traffic, latency or event-count figures appear here because none could be verified.</desc>
+<rect x="0" y="0" width="1100" height="262" fill="#0B1015"/>
+<rect x="0.5" y="0.5" width="1099" height="261" fill="none" stroke="#33424F" stroke-width="1"/>
+<text x="40" y="66" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="36" font-weight="700" fill="#F3F7F9" letter-spacing="2">WARHEATMAP</text>
+<text x="42" y="94" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="15" font-weight="600" fill="#2DD4E8">Live Global Conflict Intelligence Platform</text>
+<line x1="40" y1="118" x2="1060" y2="118" stroke="#33424F" stroke-width="1"/>
+<rect x="40.5" y="136.5" width="309" height="42" rx="4" fill="#161E27" stroke="#33424F" stroke-width="1"/>
+<circle cx="64" cy="157" r="6" fill="#4ADE80" stroke="#4ADE80" stroke-width="1"/>
+<text x="82" y="162" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="14" font-weight="700" fill="#4ADE80">LIVE</text>
+<text x="128" y="162" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="14" fill="#F3F7F9">warheatmap.app</text>
+<rect x="362.5" y="136.5" width="112" height="42" rx="4" fill="#161E27" stroke="#33424F" stroke-width="1"/>
+<text x="382" y="162" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="14" font-weight="700" fill="#A7B6C2">MIT</text>
+<text x="424" y="162" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="13" fill="#A7B6C2">licence</text>
+<rect x="40.5" y="200.5" width="170" height="30" rx="4" fill="#1E2833" stroke="#33424F" stroke-width="1"/>
+<text x="53" y="220" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="13" fill="#A7B6C2">CLOUDFLARE WORKERS</text>
+<rect x="220.5" y="200.5" width="98" height="30" rx="4" fill="#1E2833" stroke="#33424F" stroke-width="1"/>
+<text x="233" y="220" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="13" fill="#A7B6C2">D1 SQLITE</text>
+<rect x="328.5" y="200.5" width="130" height="30" rx="4" fill="#1E2833" stroke="#33424F" stroke-width="1"/>
+<text x="341" y="220" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="13" fill="#A7B6C2">CLOUDFLARE KV</text>
+<rect x="468.5" y="200.5" width="106" height="30" rx="4" fill="#1E2833" stroke="#33424F" stroke-width="1"/>
+<text x="481" y="220" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="13" fill="#A7B6C2">LEAFLET.JS</text>
+<rect x="584.5" y="200.5" width="114" height="30" rx="4" fill="#1E2833" stroke="#33424F" stroke-width="1"/>
+<text x="597" y="220" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="13" fill="#A7B6C2">AT PROTOCOL</text>
+<rect x="708.5" y="200.5" width="162" height="30" rx="4" fill="#1E2833" stroke="#33424F" stroke-width="1"/>
+<text x="721" y="220" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="13" fill="#A7B6C2">JAVASCRIPT ES2024</text>
+<text x="40" y="248" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="12" fill="#A7B6C2">Live status measured by HTTP request 2026-08-27 17:09 ET. No traffic, latency or event-count figures shown &#8212; none could be verified.</text>
+</svg>

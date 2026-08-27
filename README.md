@@ -8,7 +8,6 @@
 <br/>
 
 [![🔴 Live App](https://img.shields.io/badge/🔴_LIVE-warheatmap.app-ef4444?style=for-the-badge&logo=firefoxbrowser&logoColor=white)](https://warheatmap.app)
-[![⚓ Strait Tracker](https://img.shields.io/badge/⚓_STRAIT_TRACKER-tracker.warheatmap.app-0ea5e9?style=for-the-badge&logo=googlemaps&logoColor=white)](https://tracker.warheatmap.app)
 [![OSINT Network](https://img.shields.io/badge/OSINT-osintnet.uk-1e293b?style=for-the-badge&logo=googlemaps&logoColor=white)](https://osintnet.uk)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
 
@@ -68,7 +67,6 @@
 ### strait-news-worker v3.1 — May 9, 2026
 - 🔧 **CORS fix** — `Access-Control-Allow-Headers: *` added to all responses + preflight
 - ✅ `/oil-live` endpoint confirmed operational
-- ✅ All secrets restored: NEWSAPI, ANTHROPIC, GEMINI, TELEGRAM, AISSTREAM, ALPHA_VANTAGE, FINNHUB
 
 
 ## 🔍 What Is WarHeatMap?
@@ -84,7 +82,6 @@ Built for researchers, journalists, activists, and anyone tracking global instab
 | Feature | Description |
 |---|---|
 | 🌍 **Interactive Heatmap** | Leaflet.js world map with live conflict zones, severity overlay |
-| ⚓ **Strait Tracker** | Dedicated Hormuz/naval OSINT sub-dashboard |
 | 📡 **Bluesky Auto-Post** | Intelligence threads fire to Bluesky via AT Protocol |
 | 🔴 **Hot Zone Detection** | Algorithmic severity classification (RED/ORANGE/YELLOW) |
 | 📰 **Intel Feed** | Aggregated live news across all active theaters |
@@ -183,8 +180,6 @@ wrangler d1 create warheatmap-db
 # Deploy main worker
 wrangler deploy workers/warheatmap-worker.js
 
-# Deploy strait tracker
-wrangler deploy workers/strait-tracker-worker.js
 ```
 
 ---

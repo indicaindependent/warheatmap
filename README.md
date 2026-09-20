@@ -67,6 +67,62 @@ Built for researchers, journalists, activists, and anyone tracking global instab
 
 ---
 
+## Coverage, Measured
+
+Every figure in this section was **measured from the live site**, not estimated. The event count
+comes from the published sitemap; the type, severity and sourcing breakdowns come from reading a
+**random sample of 260 event pages** and parsing their fields, so those are proportions rather than
+totals.
+
+<img src="https://raw.githubusercontent.com/indicaindependent/warheatmap/main/assets/charts/warheatmap-coverage.svg" alt="WarHeatMap coverage measured 2026-09-20: 6,983 indexed event pages, 17 event types, 32 named conflicts, 168 distinct cited sources in a 260-event sample. Event types by share: airstrike 18.5%, diplomacy 13.5%, ground battle 11.9%, missile 10.4%, protest 9.2%, naval 8.1%. Severity: HIGH 53.1%, MEDIUM 30.8%, CRITICAL 12.3%, LOW 3.8%." width="100%">
+
+```
+6,985   individually indexed, server-rendered event pages   (sitemap, 2026-09-20 19:45 ET)
+   25   static pages
+  260   event pages read in full for the breakdowns below
+   17   distinct event types
+   32   named conflicts in the sample alone
+  168   distinct cited outlets in the sample
+```
+
+The chart above was rendered a few hours earlier the same day at **6,983**. The count climbs
+continuously, which is the point of a live tracker — treat any exact figure here as a floor.
+
+### Event types
+
+| Event type | Share | | Event type | Share |
+|---|---:|---|---|---:|
+| Airstrike | 18.5% | | Terrorism | 4.6% |
+| Diplomacy | 13.5% | | Humanitarian | 3.5% |
+| Ground battle | 11.9% | | Infrastructure | 3.5% |
+| Missile | 10.4% | | Sanctions | 3.1% |
+| Protest | 9.2% | | Explosion | 1.9% |
+| Naval | 8.1% | | Assassination / border / cyber | 1.5% / 1.5% / 1.2% |
+| Other | 6.9% | | Migration / nuclear | 0.4% / 0.4% |
+
+### Severity distribution
+
+| Severity | Events in sample | Share |
+|---|---:|---:|
+| CRITICAL | 32 | 12.3% |
+| HIGH | 138 | 53.1% |
+| MEDIUM | 80 | 30.8% |
+| LOW | 10 | 3.8% |
+
+### Sourcing is the differentiator
+
+The 260 sampled events cite **168 distinct outlets** — Al Jazeera, Reuters, Associated Press, UN
+News, Kyiv Independent, Sudan Tribune, Anadolu Agency, The Hindu, Taiwan News, IOM DTM and 158
+more. **No single outlet exceeds 5% of the sample.** That distribution is what separates an event
+record from an aggregator reprinting one wire.
+
+**77 of the 260 carry a casualty count and 44 carry a displacement figure**, because an event
+without a number attached is just a claim.
+
+Coverage runs continuously from **March 2026 to the present day**.
+
+---
+
 ## Features
 
 | Feature | Description |
@@ -92,7 +148,7 @@ Gaza / West Bank        — IDF operations | Casualty tracking | Ceasefire statu
 Sudan                   — RSF vs SAF | Humanitarian corridor status
 DRC / M23               — Eastern Congo offensive tracking
 Myanmar                 — Junta vs. resistance | KIO/KNLA operations
- + many more active theatres · 4,000+ verified events
+ + many more active theatres · 6,900+ verified events
 ```
 
 ---

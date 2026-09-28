@@ -26,12 +26,12 @@
 ## Changelog
 
 **Full build history, from the first production deploy on 2026-03-05: [CHANGELOG.md](CHANGELOG.md).** It is built
-from the app's own deploy record. The version numbers below belong to the StraitTracker service. The main app has
-never carried one, and versions v1 to v5 were never recorded, so none are invented.
+from the app's own deploy record. warheatmap.app has never carried a version number. The v6.x numbers belong to
+StraitTracker, a separate Cloudflare mini app that is now retired, and are listed under its own heading below.
 
 From 2026-09-28 on, every change to the app or this repo gets a dated entry here.
 
-### warheatmap.app updates since v6.5
+### warheatmap.app updates since August 13
 
 - **2026-09-28** Talk page (#warheatmap on EFnet, VoxTerrae download); Ukraine tracker and September briefing;
   intelligent event clustering; Gaza card fixes.
@@ -41,7 +41,7 @@ From 2026-09-28 on, every change to the app or this repo gets a dated entry here
 - **2026-08-15 to 2026-08-23** Pagination, real-time filtering overhaul, redesigned interface, share pipeline
   rebuilt with short links and dynamic cards.
 
-### Repository updates since v6.5
+### Repository updates since August 13
 
 - **2026-09-28: Live Right Now.** A status card and a world map of the last 7 days, rebuilt about every 30 minutes
   from the public warheatmap.app feed, plus an interactive mini map on GitHub Pages
@@ -52,25 +52,29 @@ From 2026-09-28 on, every change to the app or this repo gets a dated entry here
   added, one donation path, the secret inventory and retired StraitTracker promises removed, the Discord line
   removed.
 
-### Also in the repo between v6.1 and v6.5, not previously logged
+### StraitTracker repo syncs, not previously logged
 
 - **2026-06-14: strait-news-worker v3.2** synced from the live source (sanitized).
 - **2026-06-05: mobile Strait Tracker worker** added (bottom-sheet UI, touch map, live feed).
 
-### v6.5 — August 13, 2026 *(latest documented release)*
+### August 13, 2026: deep-link grammar v2 (warheatmap.app)
 
 - **Dynamic deep-link grammar v2** — every shareable/OG card can now steer the app precisely: `?country=X` focuses the map, `?feed-country=X` focuses and loads that country's feed, `?tag=<category>` filters the feed to a category, `?events=critical` jumps to critical-only, and `?criticalevents-country=X` combines both. Powers click-backs from the OSINT auto-post threads.
 - **OSINT auto-posting desks** — WarDesk (daily conflict brief), SpyDesk (surveillance), and WarChest (markets-at-war) compose OG-card threads to Bluesky and deep-link back into the exact map view for each story.
 - **Category tag bar** — filter the live map/feed by event type (AIRSTRIKE, GROUND, NAVAL, MISSILE, EXPLOSION, TERRORISM, CYBER, NUCLEAR, DIPLOMACY, SANCTIONS, INFRA, and more) plus STATS and FEED tabs.
 - **Scale** — now plotting 4,000+ verified events across every active theatre.
 
-### v6.2 — July 18, 2026
+### July 18, 2026: SEO and crawlability (warheatmap.app)
 
 - **AI/SEO crawlability**: served-side answer block, FAQ + JSON-LD schema (WebSite, Organization, FAQPage) injected at the origin so AI crawlers and search engines can ground on real content instead of an empty SPA shell.
 - **Bot-prerender pattern**: crawlers receive fully-rendered, structured HTML while human visitors keep the live SPA experience.
 - **Search Console loop**: automated weekly performance reporting to track ranking lift after SEO deploys.
 
-### v6.1 — May 9, 2026
+### StraitTracker (retired Cloudflare mini app, archived)
+
+Not part of warheatmap.app. Kept for the record; the v6.x numbers are its own.
+
+### StraitTracker v6.1 — May 9, 2026
 - **CORS fix** — removed `User-Agent` from browser fetch; added `Access-Control-Allow-Headers: *` to strait-news-worker
 - **Fixed `updateWarDay` / `forceRefresh` / `refreshPrices`** — functions were called at boot but never defined (caused full UI freeze)
 - **Daily price cache** — Brent/WTI/BTC now ingested once per day via `localStorage` TTL (24h), not on every page visit
@@ -78,7 +82,7 @@ From 2026-09-28 on, every change to the app or this repo gets a dated entry here
 - **`autoRefresh()`** — 5-min background refresh respects daily price cache
 - **NOW button** — `forceRefresh()` clears price cache, re-fetches all live data, flashes UI confirmation
 
-### v6.0 — May 7, 2026
+### StraitTracker v6.0 — May 7, 2026
 - Full SVG map rebuild — no external Leaflet dependency (WARP-safe)
 - Live intel brief panel — auto-populates from strait-news-worker
 - IRGCN asset positions + US Navy carrier group overlays
@@ -205,7 +209,8 @@ Myanmar                 — Junta vs. resistance | KIO/KNLA operations
 
 warheatmap.app is a Base44 application, and has been since 2026-03-05. Events are Base44 entities, and the
 public feed is Base44's entity API. Cloudflare fronts the domain and hosts the satellite services on subdomains:
-StraitTracker, the OSINT desks that post to Bluesky, and the share cards. The D1 databases belong to those
+the OSINT desks that post to Bluesky and the share cards. StraitTracker, an earlier Cloudflare mini app, is
+retired and archived here. The D1 databases belong to those
 services. The app's own source is platform-managed and is not in this repository. The `workers/` tree here is the
 Cloudflare side only, and the Tech Stack, Architecture and Deploy Your Own sections below describe those
 satellite services, not the map app.

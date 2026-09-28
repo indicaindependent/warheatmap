@@ -1,7 +1,7 @@
 """WarHeatMap live card + live map for GitHub.
 
 Reads the PUBLIC warheatmap.app event feed (no credentials; the app is public without login and
-serves CORS *), renders two static SVGs and the mini-app bundle into ./_site for GitHub Pages.
+serves CORS *), renders three static SVGs (card, map, type mix) and the mini-app bundle into ./_site for GitHub Pages.
 Standard library only. Every title is untrusted news text and is XML-escaped before rendering.
 House style (Pete's written standard): solid backgrounds, real <title>/<desc> text nodes, a stroke
 on every mark, no animation, no glow, no gradients behind text.
@@ -134,6 +134,57 @@ def main():
     m.append(T(MW - 36, MH - 32, "land: Natural Earth 110m · data: warheatmap.app", 10, MUTED, anchor="end"))
     m.append("</svg>")
     open(os.path.join(OUT, "live-map.svg"), "w").write("".join(m))
+
+
+    # ---------------- live mix (replaces the static 2026-09-20 table on the profile) ----------------
+    # Same feed as the card: the newest 500 events. Shares are of that window, not all-time totals,
+    # and the date span is printed on the image so it cannot be misread.
+    win = [e for e in events if not e.get("is_sample") and not e.get("marked_for_deletion")]
+    span = f"{min(when(e) for e in win):%Y-%m-%d} to {max(when(e) for e in win):%Y-%m-%d}"
+    cats = {}
+    for e in win:
+        c = str(e.get("category") or "other").replace("_", " ").lower(); cats[c] = cats.get(c, 0) + 1
+    cats = sorted(cats.items(), key=lambda kv: (-kv[1], kv[0]))
+    conflicts = {e.get("conflict_name") for e in win if e.get("conflict_name")}
+    sources = {e.get("source_name") for e in win if e.get("source_name")}
+    sevw = {k: sum(1 for e in win if str(e.get("severity", "")).lower() == k) for k in SEV}
+    n = len(win); pct = lambda v: f"{100 * v / n:.1f}%"
+    W2 = 980; top = 176; rh = 19; H2 = top + len(cats) * rh + 150
+    x = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W2} {H2}" width="{W2}" height="{H2}" role="img" aria-labelledby="xt xd">',
+         '<title id="xt">WarHeatMap, what is on the map right now</title>',
+         f'<desc id="xd">The newest {n} events in the public warheatmap.app feed, {span}, read {stamp}. '
+         f'{len(cats)} event types, {len(conflicts)} named conflicts, {len(sources)} cited sources. By type: '
+         + escape("; ".join(f"{c} {v} ({pct(v)})" for c, v in cats)) + '. By severity: '
+         + "; ".join(f"{k} {v} ({pct(v)})" for k, v in sevw.items()) + '.</desc>',
+         f'<rect width="{W2}" height="{H2}" fill="{BG}"/>',
+         f'<rect x="12" y="12" width="{W2-24}" height="{H2-24}" rx="10" fill="none" stroke="{BORDER}"/>',
+         T(36, 48, "WARHEATMAP · WHAT IS ON THE MAP, LIVE", 18, TEXT, 700, ls=1),
+         T(36, 68, f"newest {n} events, {span} · read {stamp}", 11, MUTED)]
+    tiles2 = [(str(n), "events in this window", TEAL), (str(len(cats)), "event types", TEAL),
+              (str(len(conflicts)), "named conflicts", SEV["high"]), (str(len(sources)), "cited sources", SEV["low"])]
+    for i, (big, lab, col) in enumerate(tiles2):
+        tx = 36 + i * (tw + 12)
+        x += [f'<rect x="{tx}" y="86" width="{tw}" height="60" rx="7" fill="{CARD}" stroke="{BORDER}"/>',
+              f'<rect x="{tx}" y="86" width="4" height="60" rx="2" fill="{col}" stroke="{col}"/>',
+              T(tx + 16, 113, big, 21, col, 700), T(tx + 16, 134, lab, 10, MUTED)]
+    x.append(T(36, top - 8, "EVENT TYPE", 11, MUTED, 700, ls=1))
+    bx, bw, mx = 200, 560, max(v for _, v in cats)
+    for i, (c, v) in enumerate(cats):
+        y = top + 8 + i * rh
+        x += [T(36, y + 11, c, 11, TEXT),
+              f'<rect x="{bx}" y="{y}" width="{bw}" height="12" rx="2" fill="{CARD2}" stroke="{BORDER}"/>',
+              f'<rect x="{bx}" y="{y}" width="{max(2, round(bw * v / mx))}" height="12" rx="2" fill="{TEAL}" stroke="{TEAL}"/>',
+              T(bx + bw + 16, y + 11, v, 11, TEXT, 700), T(bx + bw + 64, y + 11, pct(v), 11, MUTED)]
+    sy = top + 8 + len(cats) * rh + 22
+    x.append(T(36, sy, "SEVERITY", 11, MUTED, 700, ls=1))
+    for i, k in enumerate(SEV):
+        tx = 36 + i * (tw + 12)
+        x += [f'<rect x="{tx}" y="{sy + 12}" width="{tw}" height="44" rx="7" fill="{CARD}" stroke="{BORDER}"/>',
+              f'<rect x="{tx}" y="{sy + 12}" width="4" height="44" rx="2" fill="{SEV[k]}" stroke="{SEV[k]}"/>',
+              T(tx + 16, sy + 31, k.upper(), 11, SEV[k], 700), T(tx + 16, sy + 48, f"{sevw[k]} events · {pct(sevw[k])}", 11, TEXT)]
+    x.append(T(36, H2 - 28, "Shares are of this window, not all-time totals. Times UTC. Click through for the interactive map.", 10, MUTED))
+    x.append("</svg>")
+    open(os.path.join(OUT, "live-mix.svg"), "w").write("".join(x))
 
     # ---------------- mini app bundle ----------------
     shutil.copy(os.path.join(HERE, "index.html"), os.path.join(OUT, "index.html"))

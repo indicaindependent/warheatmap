@@ -59,6 +59,22 @@
 - `/oil-live` endpoint confirmed operational
 
 
+## Live Right Now
+
+<a href="https://indicaindependent.github.io/warheatmap/"><img src="https://indicaindependent.github.io/warheatmap/live-card.svg" alt="WarHeatMap live status, rebuilt about every 30 minutes from the public warheatmap.app feed: events in the last 24 hours and 7 days, countries covered, severity mix, and the five newest events with their sources." width="100%"></a>
+
+<a href="https://indicaindependent.github.io/warheatmap/"><img src="https://indicaindependent.github.io/warheatmap/live-map.svg" alt="The last 7 days of WarHeatMap events plotted on a world map and coloured by severity: critical, high, medium, low." width="100%"></a>
+
+These two images rebuild themselves about every 30 minutes from the public WarHeatMap feed. Click either one
+for the **[mini map](https://indicaindependent.github.io/warheatmap/)**: filter by severity and event type, open any event and its source. It reads the
+feed live in your browser, with no login and no tracking.
+
+Built by [`live/build_live.py`](live/build_live.py) and [`.github/workflows/live.yml`](.github/workflows/live.yml).
+No secret is involved: the feed is public, and the pages are deployed as a Pages artifact, so the
+refreshes add nothing to this repo's history.
+
+---
+
 ## What Is WarHeatMap?
 
 **WarHeatMap** is a free, open-source live conflict intelligence platform that aggregates geopolitical flashpoints, overlays them on an interactive world map, and auto-posts intelligence threads to **Bluesky** via the AT Protocol — all running at the edge on **Cloudflare Workers**.

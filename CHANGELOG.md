@@ -3,8 +3,9 @@
 The complete build history of [warheatmap.app](https://warheatmap.app), newest first. Dates are UTC.
 
 **Where this comes from.** warheatmap.app is a Base44 application, and Base44 keeps a checkpoint for every change
-made to it. This history is built from that record: 487 checkpoints from 2026-03-05 to 2026-09-28, of which 224
-were deployed to production. Entries below are production deploys only, grouped into milestones, in the builder's
+made to it. This history is built from that record, read directly on 2026-09-28: 488 checkpoints from 2026-03-05 to
+2026-09-28, of which 224 were deployed to production. The full list is in
+[docs/history/deploy-record.md](docs/history/deploy-record.md). Entries below are production deploys only, grouped into milestones, in the builder's
 own words where possible (they are builder checkpoint titles, not release notes). The app has never carried a
 version number, so none is invented here.
 
@@ -18,7 +19,7 @@ From 2026-09-28 on, every change to the app or this repo gets a dated entry here
 
 | Month | Deploys | What defined it |
 |---|---:|---|
-| 2026-03 | 116 | The app is built: map, stats dashboard, heatmap, market data, alerts, naval tracker, WAR 3.0 |
+| 2026-03 | 117 | The app is built: map, stats dashboard, heatmap, market data, alerts, naval tracker, WAR 3.0 |
 | 2026-04 | 27 | A Strait Tracker button links out to the separate StraitTracker mini app |
 | 2026-05 | 6 | Maintenance |
 | 2026-06 | 3 | Maintenance |
@@ -26,7 +27,7 @@ From 2026-09-28 on, every change to the app or this repo gets a dated entry here
 | 2026-08 | 40 | Deep-link grammar, share pipeline, server-rendered event pages, performance |
 | 2026-09 | 6 | Local OG card rendering, Talk page, event clustering |
 
-Counts are from the deploy record (223 table rows as read; the record's own header says 224).
+Counts are deployed changes per month, by deploy date. They total 224.
 
 ## September 2026
 

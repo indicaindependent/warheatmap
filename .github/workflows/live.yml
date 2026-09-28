@@ -1,0 +1,35 @@
+# WarHeatMap live card, live map and mini app, published to GitHub Pages.
+# Reads the PUBLIC warheatmap.app event feed. No secrets are used or needed.
+# Output: https://indicaindependent.github.io/warheatmap/  (live-card.svg, live-map.svg, index.html)
+# Deploys a Pages artifact instead of committing, so 48 refreshes a day add nothing to git history.
+name: live
+on:
+  schedule:
+    - cron: "7,37 * * * *"   # about every 30 minutes; GitHub may delay scheduled runs under load
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["live/**", ".github/workflows/live.yml"]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages-live
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: python3 live/build_live.py
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with: { path: _site }
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: { name: github-pages, url: "${{ steps.d.outputs.page_url }}" }
+    steps:
+      - id: d
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

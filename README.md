@@ -25,7 +25,29 @@
 
 ## Changelog
 
-### v6.5 — August 13, 2026 *(Latest)*
+How to read this: app releases are listed by version. Repository updates are listed by date, taken from this
+repo's git history (UTC). This repository was created on 2026-05-02, so versions before v6.0 predate it and are
+not documented here yet. They will be added only from the project's own records, not reconstructed.
+
+From 2026-09-28 on, every change to the app or this repo gets a dated entry here.
+
+### Repository updates since v6.5
+
+- **2026-09-28: Live Right Now.** A status card and a world map of the last 7 days, rebuilt about every 30 minutes
+  from the public warheatmap.app feed, plus an interactive mini map on GitHub Pages
+  ([`live/`](live/), [`.github/workflows/live.yml`](.github/workflows/live.yml)).
+- **2026-09-20: Coverage, Measured.** Event count re-measured from the live sitemap (6,983 indexed event pages),
+  with a coverage chart, event-type and severity shares, and a sourcing breakdown. Replaced the stale "4,000+".
+- **2026-08-27 to 2026-09-20: README cleanup.** Emoji and twenty third-party badges removed, a self-hosted header
+  added, one donation path, the secret inventory and retired StraitTracker promises removed, the Discord line
+  removed.
+
+### Also in the repo between v6.1 and v6.5, not previously logged
+
+- **2026-06-14: strait-news-worker v3.2** synced from the live source (sanitized).
+- **2026-06-05: mobile Strait Tracker worker** added (bottom-sheet UI, touch map, live feed).
+
+### v6.5 — August 13, 2026 *(latest documented release)*
 
 - **Dynamic deep-link grammar v2** — every shareable/OG card can now steer the app precisely: `?country=X` focuses the map, `?feed-country=X` focuses and loads that country's feed, `?tag=<category>` filters the feed to a category, `?events=critical` jumps to critical-only, and `?criticalevents-country=X` combines both. Powers click-backs from the OSINT auto-post threads.
 - **OSINT auto-posting desks** — WarDesk (daily conflict brief), SpyDesk (surveillance), and WarChest (markets-at-war) compose OG-card threads to Bluesky and deep-link back into the exact map view for each story.

@@ -25,11 +25,21 @@
 
 ## Changelog
 
-How to read this: app releases are listed by version. Repository updates are listed by date, taken from this
-repo's git history (UTC). This repository was created on 2026-05-02, so versions before v6.0 predate it and are
-not documented here yet. They will be added only from the project's own records, not reconstructed.
+**Full build history, from the first production deploy on 2026-03-05: [CHANGELOG.md](CHANGELOG.md).** It is built
+from the app's own deploy record. The version numbers below belong to the StraitTracker service. The main app has
+never carried one, and versions v1 to v5 were never recorded, so none are invented.
 
 From 2026-09-28 on, every change to the app or this repo gets a dated entry here.
+
+### warheatmap.app updates since v6.5
+
+- **2026-09-28** Talk page (#warheatmap on EFnet, VoxTerrae download); Ukraine tracker and September briefing;
+  intelligent event clustering; Gaza card fixes.
+- **2026-09-07** Share-card images rendered inside the app with a local pure-JS stack.
+- **2026-08-27 to 2026-08-31** Server-rendered event pages, canonical classification, richer social previews,
+  streaming event load and feed virtualisation. Push notifications launched 08-29 and switched off 08-30.
+- **2026-08-15 to 2026-08-23** Pagination, real-time filtering overhaul, redesigned interface, share pipeline
+  rebuilt with short links and dynamic cards.
 
 ### Repository updates since v6.5
 
@@ -190,6 +200,15 @@ Myanmar                 — Junta vs. resistance | KIO/KNLA operations
 ```
 
 ---
+
+## How It Is Built
+
+warheatmap.app is a Base44 application, and has been since 2026-03-05. Events are Base44 entities, and the
+public feed is Base44's entity API. Cloudflare fronts the domain and hosts the satellite services on subdomains:
+StraitTracker, the OSINT desks that post to Bluesky, and the share cards. The D1 databases belong to those
+services. The app's own source is platform-managed and is not in this repository. The `workers/` tree here is the
+Cloudflare side only, and the Tech Stack, Architecture and Deploy Your Own sections below describe those
+satellite services, not the map app.
 
 ## Tech Stack
 

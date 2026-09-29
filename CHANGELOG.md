@@ -3,8 +3,8 @@
 The complete build history of [warheatmap.app](https://warheatmap.app), newest first. Dates are UTC.
 
 **Where this comes from.** warheatmap.app is a Base44 application, and Base44 keeps a checkpoint for every change
-made to it. This history is built from that record, read directly on 2026-09-28: 488 checkpoints from 2026-03-05 to
-2026-09-28, of which 224 were deployed to production. The full list is in
+made to it. This history is built from that record, refreshed daily: 488 checkpoints from 2026-03-05 to
+2026-09-28, of which 225 were deployed to production. The full list is in
 [docs/history/deploy-record.md](docs/history/deploy-record.md). Entries below are production deploys only, grouped into milestones, in the builder's
 own words where possible (they are builder checkpoint titles, not release notes). The app has never carried a
 version number, so none is invented here.
@@ -25,12 +25,14 @@ From 2026-09-28 on, every change to the app or this repo gets a dated entry here
 | 2026-06 | 3 | Maintenance |
 | 2026-07 | 25 | Ukraine Intel Tracker, SEO, MapLibre GL, event deep links |
 | 2026-08 | 40 | Deep-link grammar, share pipeline, server-rendered event pages, performance |
-| 2026-09 | 6 | Local OG card rendering, Talk page, event clustering |
+| 2026-09 | 7 | Local OG card rendering, Talk page, event clustering, server-side news analysis |
 
-Counts are deployed changes per month, by deploy date. They total 224.
+Counts are deployed changes per month, by deploy date. They total 225.
 
 ## September 2026
 
+- **2026-09-28** News analysis moved server-side: the app's AI calls now run in a backend service, with a
+  new endpoint that analyses each incoming news item.
 - **2026-09-28** Talk page: how to reach the WarHeatMap community in #warheatmap on EFnet, with the VoxTerrae
   download, a short explanation of IRC, and a plain-client fallback.
 - **2026-09-28** Ukraine tracker updated; September 2026 intelligence briefing and SEO metadata on the About page.

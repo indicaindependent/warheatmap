@@ -1,8 +1,8 @@
 # warheatmap.app deploy record
 
 Every change deployed to production on warheatmap.app, oldest first. Read directly from Base44's checkpoint
-history for the app on 2026-09-28 at 15:3x UTC: 488 checkpoints saved, 224 deployed. Only deployed ones
-are listed.
+history for the app, refreshed daily: 488 checkpoints saved, 225 deployed. Only deployed ones are
+listed. Latest deploy: 2026-09-28.
 
 - **Deployed (UTC)** is when that change last went live, from Base44's server clock.
 - **Title** is the app builder's own name for the change, verbatim. These are working notes, not release notes,
@@ -239,3 +239,4 @@ The curated history is in [CHANGELOG.md](../../CHANGELOG.md). This file is the r
 | 2026-09-28 13:18 | Add Talk page, update Ukraine tracker, and improve SEO/data reporting | 651f9b6467 |
 | 2026-09-28 13:29 | Implement intelligent event clustering and fix grammar issues | 71155a6013 |
 | 2026-09-28 13:45 | Refine Gaza card filtering logic and fallback state | 388b51eba5 |
+| 2026-09-28 22:25 | Refactor LLM invocation to backend service-role and implement analyzeNewsItem endpoint | 0e51d15207 |

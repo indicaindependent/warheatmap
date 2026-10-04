@@ -32,6 +32,10 @@ Counts are deployed changes per month, by deploy date. They total 236.
 
 ## October 2026
 
+- **2026-10-04** Event pages answer crawlers with real HTTP status from an edge layer in front of the app: a live
+  event returns 200 with a server-rendered article and its cited source, a merged duplicate returns 301 to the
+  surviving event, and an unknown id returns 404 with noindex. `www.warheatmap.app` now redirects to the apex.
+  Visitors still get the interactive app. Same-outlet, same-day duplicates are merged at ingest.
 - **2026-10-04** (this repo) Coverage, Measured re-measured in full: all 6,103 verified live events counted, replacing
   the 2026-09-20 sample of 260 pages, with a new coverage chart.
 - **2026-10-04** (this repo) The live card, the 7-day map and the mini map follow the app's duplicate merging:

@@ -46,6 +46,8 @@ From 2026-09-28 on, every change to the app or this repo gets a dated entry here
 
 ### Repository updates since August 13
 
+- **2026-10-04: How It Is Built rewritten** from a read of the live edge services: the app on Base44, and the
+  Cloudflare edge layer, sources registry, OSINT desk pipeline, Lightning tips and watchdog around it.
 - **2026-10-04: README reconciled to the live app.** Stack, features, architecture, repo structure and data
   sources rewritten from the live site, the repository tree and the sources registry; the Cloudflare-era
   stack description, a dead Bluesky link and file paths that no longer exist were removed.
@@ -198,7 +200,7 @@ Coverage runs continuously from **late February 2026 to the present day**.
 | **Naval layer** | Naval incidents plotted on their own map layer |
 | **Ukraine tracker** | Frontline event feed with casualty and displacement figures and ISW-informed daily summaries |
 | **Category filters** | Filter the map and feed by event type: airstrike, naval, missile, cyber, nuclear, diplomacy, sanctions and more |
-| **Bluesky** | OSINT desks post live events to Bluesky as [@indica.osintnet.uk](https://bsky.app/profile/indica.osintnet.uk) |
+| **Bluesky** | WarHeatMap posts events with their source as [@warheatmap.bsky.social](https://bsky.app/profile/warheatmap.bsky.social); the OSINT desks post research threads as [@indica.osintnet.uk](https://bsky.app/profile/indica.osintnet.uk) |
 | **Talk** | The WarHeatMap community meets in #warheatmap on EFnet |
 
 ---
@@ -226,23 +228,35 @@ Plus 183 more named conflicts.
 
 ## How It Is Built
 
-warheatmap.app is a Base44 application, and has been since 2026-03-05. Events are Base44 entities, and the
-public feed is Base44's entity API. Headlines from vetted outlets are ingested, analysed and merged for duplicates
-on the app's backend. The app's own source is platform-managed and is not in this repository.
+WarHeatMap has two layers: the app on **Base44**, and a set of edge services on **Cloudflare** around it.
 
-Cloudflare fronts the domain and hosts the satellite services: the OSINT desks that post to Bluesky, the share
-cards, and the worker on `warheatmap.app/*` that adds the support button. StraitTracker, an earlier Cloudflare
-mini app, is retired and archived here.
+**The app (Base44).** warheatmap.app was built on Base44 and is hosted there, and has been since 2026-03-05.
+The map, the event database, the public Event API, the AI analysis of incoming news, duplicate merging and
+the share images for each event all run on Base44. The app's source is platform-managed and is not in this
+repository.
+
+**The edge (Cloudflare).** These services are related to the app and run alongside it:
+
+| Service | What it does |
+|---|---|
+| **Edge layer** | Sits in front of warheatmap.app and passes visitors through to the app unchanged. For crawlers it answers event pages with real HTTP status (200 for a live event, 301 for a merged duplicate, 404 for an unknown id), serves the server-rendered article and the home page answer block, and sends `www` to the apex. If it fails, requests fall through to the app. |
+| **Sources registry and news research** | Holds the public, fail-closed allowlist of outlets and gathers headlines region by region. The app ingests only headlines that pass it. |
+| **OSINT desk pipeline** | Research desks compose threads, a fact-check gate checks every thread's claims before publication, a scheduler publishes them, and a posting engine adds images and posts to Bluesky as @indica.osintnet.uk. The desks' post cards are rendered here too. |
+| **Lightning tips** | The Lightning address behind Support the Mission, resolving to our own node, so no third party touches the sats. |
+| **Watchdog** | An hourly health check that alerts by Telegram. |
+
+StraitTracker, an earlier Cloudflare mini app, is retired and archived here.
 
 ## Tech Stack
 
 ```
-App:          Base44 application · React · Base44 entities and entity API
-Maps:         MapLibre GL (desktop) · Leaflet (mobile map and naval layer)
-Event pages:  Server-rendered per event at /e/<id> · sitemap index by month
-Edge:         Cloudflare Workers in front of the domain and for the satellite services
-Social:       AT Protocol → Bluesky (@indica.osintnet.uk)
-This repo:    GitHub Actions + GitHub Pages for the live card, 7-day map and mini map
+App (Base44):     React · MapLibre GL (desktop) · Leaflet (mobile map and naval layer)
+                  Event entities · public Event API · backend functions for ingest, analysis and share images
+Event pages:      One per event at /e/<id> · sitemap index by month
+Edge (Cloudflare): Workers for the edge layer, sources registry, OSINT desks, Lightning tips and watchdog
+                  Workers AI · D1 · KV · R2 where a service keeps state
+Social:           AT Protocol → Bluesky
+This repo:        GitHub Actions + GitHub Pages for the live card, 7-day map and mini map
 ```
 
 ---
@@ -250,23 +264,29 @@ This repo:    GitHub Actions + GitHub Pages for the live card, 7-day map and min
 ## Architecture
 
 ```
-Vetted outlets (sources registry, fail-closed allowlist)
-        ↓
-Ingest, AI analysis and duplicate merging   (warheatmap.app backend)
-        ↓
-Event entities ──→ warheatmap.app            (React · MapLibre GL / Leaflet)
-               ──→ /e/<id> event pages + sitemap index
-               ──→ public Event API ──→ this repo: live card, 7-day map, mini map   (about every 30 minutes)
-               ──→ OSINT desks ──→ Bluesky
+                    Visitors and crawlers
+                             ↓
+   Edge layer (Cloudflare)   crawler answers for /e/<id> and home · www → apex · fails open
+                             ↓
+   warheatmap.app (Base44)   React · MapLibre GL / Leaflet · Event entities
+        ↑                    ↓                         ↓
+   vetted headlines     /e/<id> pages          public Event API ──→ this repo: live card,
+        │               + sitemap index                             7-day map, mini map
+   Sources registry and                                             (about every 30 minutes)
+   news research (Cloudflare)
+
+   OSINT desks ──→ fact-check gate ──→ scheduler ──→ posting engine ──→ Bluesky   (Cloudflare)
 ```
 
 ---
 
 ### SEO & Crawlability
 
-The map is a client-rendered app, but search engines and AI crawlers get readable HTML. The home page carries
-an accessible H1, an FAQ and JSON-LD (WebSite, Organization, FAQPage and more), and every event has its own
-server-rendered page with a canonical URL, listed in a sitemap index with one child per month.
+The map is a client-rendered app, but search engines and AI crawlers get readable HTML from the edge layer.
+The home page carries an accessible H1, an FAQ, the latest verified events and JSON-LD (WebSite, Organization,
+FAQPage, ItemList and more). Every event has its own server-rendered page with a canonical URL and its cited
+source, merged duplicates redirect to the surviving event, unknown ids return a real 404, and the sitemap index
+lists every page with one child per month.
 
 ## Repo Structure
 
@@ -285,10 +305,9 @@ server-rendered page with a canonical URL, listed in a sitemap index with one ch
 └── README.md
 ```
 
-The `workers/` folder holds source copies, not the running map app. `whm-fab-injector.js` is the support-button
-worker in front of warheatmap.app. The `strait-*` files are the retired StraitTracker. The `facemap-*` and
-`facerec-tracker.js` files belong to FaceHeatMap, a separate archived project, and none of these are currently
-deployed.
+The `workers/` folder holds source copies, not the running services. One is an earlier version of the edge
+layer, no longer in front of the site. The `strait-*` files are the retired StraitTracker, and the `facemap-*`
+and `facerec-tracker.js` files belong to FaceHeatMap, a separate archived project.
 
 ---
 

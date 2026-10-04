@@ -1,8 +1,8 @@
 # warheatmap.app deploy record
 
 Every change deployed to production on warheatmap.app, oldest first. Read directly from Base44's checkpoint
-history for the app, refreshed daily: 488 checkpoints saved, 225 deployed. Only deployed ones are
-listed. Latest deploy: 2026-09-28.
+history for the app, refreshed daily: 508 checkpoints saved, 236 deployed. Only deployed ones are
+listed. Latest deploy: 2026-10-04.
 
 - **Deployed (UTC)** is when that change last went live, from Base44's server clock.
 - **Title** is the app builder's own name for the change, verbatim. These are working notes, not release notes,
@@ -240,3 +240,14 @@ The curated history is in [CHANGELOG.md](../../CHANGELOG.md). This file is the r
 | 2026-09-28 13:29 | Implement intelligent event clustering and fix grammar issues | 71155a6013 |
 | 2026-09-28 13:45 | Refine Gaza card filtering logic and fallback state | 388b51eba5 |
 | 2026-09-28 22:25 | Refactor LLM invocation to backend service-role and implement analyzeNewsItem endpoint | 0e51d15207 |
+| 2026-10-03 23:52 | Restrict news and displacement ingest to vetted worker headlines | d0268d3c00 |
+| 2026-10-03 23:57 | Automate daily morning rebuild of Ukraine Ground Truth cards | 12a5338b0a |
+| 2026-10-04 00:14 | Replace all emojis with SVG icons | b660cd8406 |
+| 2026-10-04 00:23 | Implement SEO and dynamic sitemap generation for event pages | 69dfc523dc |
+| 2026-10-04 00:37 | Update event page SEO metadata, structured data, and sitemap | 7996f5d294 |
+| 2026-10-04 00:41 | Optimize event fetching to reduce read traffic volume | d9f52f86bc |
+| 2026-10-04 00:45 | Filter news ticker to include only critical events | dc5b989d06 |
+| 2026-10-04 02:18 | Update event page layout and structure | b85d33949b |
+| 2026-10-04 04:56 | Implement minor severity event filtering and deduplication logic | 3f5d073744 |
+| 2026-10-04 05:08 | Add severity filter toggle to home and country feeds | 4b9e141d15 |
+| 2026-10-04 12:05 | Remove medium and low severity filter toggle | 34c280fb6f |

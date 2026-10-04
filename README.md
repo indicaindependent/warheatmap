@@ -33,8 +33,11 @@ From 2026-09-28 on, every change to the app or this repo gets a dated entry here
 
 ### warheatmap.app updates since August 13
 
+- **2026-10-03 to 2026-10-04** Duplicate events merged at ingest and in a one-time backfill; canonical event
+  pages at `/e/<id>` with structured data and a visible source line; a sitemap index; the feed shows critical
+  and high severity; every emoji replaced with an SVG icon.
 - **2026-09-28** Talk page (#warheatmap on EFnet, VoxTerrae download); Ukraine tracker and September briefing;
-  intelligent event clustering; Gaza card fixes.
+  intelligent event clustering; Gaza card fixes; news analysis moved server-side.
 - **2026-09-07** Share-card images rendered inside the app with a local pure-JS stack.
 - **2026-08-27 to 2026-08-31** Server-rendered event pages, canonical classification, richer social previews,
   streaming event load and feed virtualisation. Push notifications launched 08-29 and switched off 08-30.
@@ -43,6 +46,9 @@ From 2026-09-28 on, every change to the app or this repo gets a dated entry here
 
 ### Repository updates since August 13
 
+- **2026-10-04: Coverage re-measured, and the live map follows deduplication.** Coverage now counts all 6,103
+  verified live events rather than a 260-page sample. The live card, 7-day map and mini map skip merged and
+  unverified events and link to the canonical event pages.
 - **2026-09-28: Live Right Now.** A status card and a world map of the last 7 days, rebuilt about every 30 minutes
   from the public warheatmap.app feed, plus an interactive mini map on GitHub Pages
   ([`live/`](live/), [`.github/workflows/live.yml`](.github/workflows/live.yml)).
@@ -121,57 +127,59 @@ Built for researchers, journalists, activists, and anyone tracking global instab
 
 ## Coverage, Measured
 
-Every figure in this section was **measured from the live site**, not estimated. The event count
-comes from the published sitemap; the type, severity and sourcing breakdowns come from reading a
-**random sample of 260 event pages** and parsing their fields, so those are proportions rather than
-totals.
+Every figure in this section was **measured from the live site on 2026-10-04 at 13:55 ET**, and these are
+**totals, not a sample**. Every one of the **6,103 verified, live events** in the public event feed was read and
+counted. Events the site has merged as duplicates, and events it has not verified, are excluded.
 
-<img src="https://raw.githubusercontent.com/indicaindependent/warheatmap/main/assets/charts/warheatmap-coverage.svg" alt="WarHeatMap coverage measured 2026-09-20: 6,983 indexed event pages, 17 event types, 32 named conflicts, 168 distinct cited sources in a 260-event sample. Event types by share: airstrike 18.5%, diplomacy 13.5%, ground battle 11.9%, missile 10.4%, protest 9.2%, naval 8.1%. Severity: HIGH 53.1%, MEDIUM 30.8%, CRITICAL 12.3%, LOW 3.8%." width="100%">
+<img src="https://raw.githubusercontent.com/indicaindependent/warheatmap/main/assets/charts/warheatmap-coverage.svg" alt="WarHeatMap coverage measured 2026-10-04: all 6,103 verified live events, 18 event types, 192 named conflicts, 169 countries. Largest event types: airstrike 18.3%, ground battle 15.3%, diplomacy 13.9%, protest 7.9%, other 7.5%, missile 7.4%. Severity: HIGH 49.8%, MEDIUM 32.5%, CRITICAL 14.2%, LOW 3.6%." width="100%">
 
 ```
-6,985   individually indexed, server-rendered event pages   (sitemap, 2026-09-20 19:45 ET)
-   25   static pages
-  260   event pages read in full for the breakdowns below
-   17   distinct event types
-   32   named conflicts in the sample alone
-  168   distinct cited outlets in the sample
+6,103   verified, live events, each with its own server-rendered page   (event feed, 2026-10-04 13:55 ET)
+6,099   of them listed in the sitemap at the same reading
+    8   static pages
+   18   distinct event types
+  192   named conflicts
+  169   countries
+  574   events that absorbed at least one merged duplicate report
 ```
 
-The chart above was rendered a few hours earlier the same day at **6,983**. The count climbs
-continuously, which is the point of a live tracker — treat any exact figure here as a floor.
+The live card above is rebuilt about every 30 minutes; the figures here are a dated reading of a number that moves.
 
 ### Event types
 
-| Event type | Share | | Event type | Share |
-|---|---:|---|---|---:|
-| Airstrike | 18.5% | | Terrorism | 4.6% |
-| Diplomacy | 13.5% | | Humanitarian | 3.5% |
-| Ground battle | 11.9% | | Infrastructure | 3.5% |
-| Missile | 10.4% | | Sanctions | 3.1% |
-| Protest | 9.2% | | Explosion | 1.9% |
-| Naval | 8.1% | | Assassination / border / cyber | 1.5% / 1.5% / 1.2% |
-| Other | 6.9% | | Migration / nuclear | 0.4% / 0.4% |
+| Event type | Events | Share | | Event type | Events | Share |
+|---|---:|---:|---|---|---:|---:|
+| Airstrike | 1,115 | 18.3% | | Terrorism | 170 | 2.8% |
+| Ground battle | 931 | 15.3% | | Sanctions | 133 | 2.2% |
+| Diplomacy | 849 | 13.9% | | Explosion | 130 | 2.1% |
+| Protest | 484 | 7.9% | | Border crossing | 94 | 1.5% |
+| Other | 455 | 7.5% | | Assassination | 81 | 1.3% |
+| Missile | 452 | 7.4% | | Migration | 68 | 1.1% |
+| Naval | 437 | 7.2% | | Cyber | 35 | 0.6% |
+| Infrastructure | 318 | 5.2% | | Nuclear | 26 | 0.4% |
+| Humanitarian | 318 | 5.2% | | Coup | 7 | 0.1% |
 
 ### Severity distribution
 
-| Severity | Events in sample | Share |
+| Severity | Events | Share |
 |---|---:|---:|
-| CRITICAL | 32 | 12.3% |
-| HIGH | 138 | 53.1% |
-| MEDIUM | 80 | 30.8% |
-| LOW | 10 | 3.8% |
+| CRITICAL | 865 | 14.2% |
+| HIGH | 3,037 | 49.8% |
+| MEDIUM | 1,983 | 32.5% |
+| LOW | 218 | 3.6% |
 
 ### Sourcing is the differentiator
 
-The 260 sampled events cite **168 distinct outlets** — Al Jazeera, Reuters, Associated Press, UN
-News, Kyiv Independent, Sudan Tribune, Anadolu Agency, The Hindu, Taiwan News, IOM DTM and 158
-more. **No single outlet exceeds 5% of the sample.** That distribution is what separates an event
-record from an aggregator reprinting one wire.
+Every verified event names its source. The most cited are Al Jazeera (259 events), Anadolu Agency (237), The
+Guardian (230), Sudan Tribune (169), The Hindu (149), Reuters (136) and Associated Press (131). **No single outlet
+exceeds 4.2% of events.** That distribution is what separates an event record from an aggregator reprinting one
+wire. Across all events, 1,677 distinct source names are recorded; spelling variants and combined credits count
+separately there, so the number of distinct outlets is lower.
 
-**77 of the 260 carry a casualty count and 44 carry a displacement figure**, because an event
-without a number attached is just a claim.
+**1,711 events carry a casualty count and 1,217 carry a displacement figure**, because an event without a number
+attached is just a claim.
 
-Coverage runs continuously from **March 2026 to the present day**.
+Coverage runs continuously from **late February 2026 to the present day**.
 
 ---
 

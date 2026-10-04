@@ -47,7 +47,8 @@ From 2026-09-28 on, every change to the app or this repo gets a dated entry here
 ### Repository updates since August 13
 
 - **2026-10-04: How It Is Built rewritten** from a read of the live edge services: the app on Base44, and the
-  Cloudflare edge layer, sources registry, OSINT desk pipeline, Lightning tips and watchdog around it.
+  Cloudflare edge layer, sources registry, MCP data service, OSINT desk pipeline, Lightning tips and
+  watchdog around it.
 - **2026-10-04: README reconciled to the live app.** Stack, features, architecture, repo structure and data
   sources rewritten from the live site, the repository tree and the sources registry; the Cloudflare-era
   stack description, a dead Bluesky link and file paths that no longer exist were removed.
@@ -241,6 +242,7 @@ repository.
 |---|---|
 | **Edge layer** | Sits in front of warheatmap.app and passes visitors through to the app unchanged. For crawlers it answers event pages with real HTTP status (200 for a live event, 301 for a merged duplicate, 404 for an unknown id), serves the server-rendered article and the home page answer block, and sends `www` to the apex. If it fails, requests fall through to the app. |
 | **Sources registry and news research** | Holds the public, fail-closed allowlist of outlets and gathers headlines region by region. The app ingests only headlines that pass it. |
+| **Agent data service (MCP)** | A Model Context Protocol server over the app's Event and Source data, so our AI agents can read the event corpus, conflict and source stats and run SEO audits. Tool discovery is open; reading and curating events requires owner authorization. It also supplies the live event feed behind the crawler pages. |
 | **OSINT desk pipeline** | Research desks compose threads, a fact-check gate checks every thread's claims before publication, a scheduler publishes them, and a posting engine adds images and posts to Bluesky as @indica.osintnet.uk. The desks' post cards are rendered here too. |
 | **Lightning tips** | The Lightning address behind Support the Mission, resolving to our own node, so no third party touches the sats. |
 | **Watchdog** | An hourly health check that alerts by Telegram. |
@@ -253,7 +255,8 @@ StraitTracker, an earlier Cloudflare mini app, is retired and archived here.
 App (Base44):     React · MapLibre GL (desktop) · Leaflet (mobile map and naval layer)
                   Event entities · public Event API · backend functions for ingest, analysis and share images
 Event pages:      One per event at /e/<id> · sitemap index by month
-Edge (Cloudflare): Workers for the edge layer, sources registry, OSINT desks, Lightning tips and watchdog
+Edge (Cloudflare): Workers for the edge layer, sources registry, MCP data service, OSINT desks,
+                  Lightning tips and watchdog
                   Workers AI · D1 · KV · R2 where a service keeps state
 Social:           AT Protocol → Bluesky
 This repo:        GitHub Actions + GitHub Pages for the live card, 7-day map and mini map

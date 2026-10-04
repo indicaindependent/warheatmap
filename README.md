@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/indicaindependent/warheatmap/main/assets/warheatmap-header.svg" alt="WarHeatMap - live global conflict intelligence platform, built on Cloudflare Workers with D1 SQLite, Cloudflare KV, Leaflet.js, the AT Protocol and JavaScript ES2024, MIT licence. Live status measured by HTTP request." width="100%">
+<img src="https://raw.githubusercontent.com/indicaindependent/warheatmap/main/assets/warheatmap-header.svg" alt="WarHeatMap - live global conflict intelligence platform at warheatmap.app, MIT licence. Live status measured by HTTP request on 2026-08-27." width="100%">
 
 
 # WarHeatMap
@@ -46,6 +46,9 @@ From 2026-09-28 on, every change to the app or this repo gets a dated entry here
 
 ### Repository updates since August 13
 
+- **2026-10-04: README reconciled to the live app.** Stack, features, architecture, repo structure and data
+  sources rewritten from the live site, the repository tree and the sources registry; the Cloudflare-era
+  stack description, a dead Bluesky link and file paths that no longer exist were removed.
 - **2026-10-04: Coverage re-measured, and the live map follows deduplication.** Coverage now counts all 6,103
   verified live events rather than a 260-page sample. The live card, 7-day map and mini map skip merged and
   unverified events and link to the canonical event pages.
@@ -119,7 +122,7 @@ refreshes add nothing to this repo's history.
 
 ## What Is WarHeatMap?
 
-**WarHeatMap** is a free, open-source live conflict intelligence platform that aggregates geopolitical flashpoints, overlays them on an interactive world map, and auto-posts intelligence threads to **Bluesky** via the AT Protocol — all running at the edge on **Cloudflare Workers**.
+**WarHeatMap** is a free, public live conflict intelligence platform. It gathers conflict events from vetted outlets, plots them on an interactive world map with a page for every event, and posts live intelligence to **Bluesky**. The app runs on **Base44**, with **Cloudflare** in front of it.
 
 Built for researchers, journalists, activists, and anyone tracking global instability in real time — without paywalls, login walls, or corporate bias.
 
@@ -187,53 +190,59 @@ Coverage runs continuously from **late February 2026 to the present day**.
 
 | Feature | Description |
 |---|---|
-| **Interactive Heatmap** | Leaflet.js world map with live conflict zones, severity overlay |
-| **Bluesky Auto-Post** | Intelligence threads fire to Bluesky via AT Protocol |
-| **Hot Zone Detection** | Algorithmic severity classification (RED/ORANGE/YELLOW) |
-| **Intel Feed** | Aggregated live news across all active theaters |
-| **Event Archive** | D1 SQLite database of all tracked incidents |
-| **Escalation Index** | Real-time tension scoring per conflict zone |
-| **Naval OSINT** | Ship tracking, blockade status, tanker incident log |
-| **Category Filters** | Filter the map & feed by event type — airstrike, naval, missile, cyber, nuclear, diplomacy, sanctions, and more |
-| **Mobile-First** | Full responsive layout with dedicated mobile worker |
+| **Live conflict map** | MapLibre GL map on desktop and a Leaflet map on mobile, with a severity heat layer and event clustering |
+| **Severity tiers** | Every event is rated critical, high, medium or low. The feed shows critical and high; a `?severity=` deep link shows the rest |
+| **One page per event** | Every event has its own server-rendered page at `warheatmap.app/e/<id>`, with its cited sources |
+| **Duplicate merging** | Reports of the same event from several outlets are merged into one event that keeps every citation |
+| **Intel feed** | Home and per-country feeds built only from vetted outlets in a published sources registry |
+| **Naval layer** | Naval incidents plotted on their own map layer |
+| **Ukraine tracker** | Frontline event feed with casualty and displacement figures and ISW-informed daily summaries |
+| **Category filters** | Filter the map and feed by event type: airstrike, naval, missile, cyber, nuclear, diplomacy, sanctions and more |
+| **Bluesky** | OSINT desks post live events to Bluesky as [@indica.osintnet.uk](https://bsky.app/profile/indica.osintnet.uk) |
+| **Talk** | The WarHeatMap community meets in #warheatmap on EFnet |
 
 ---
 
-## Conflict Zones Tracked
+## Conflicts Tracked
 
-```
-Strait of Hormuz        — BLOCKADE ACTIVE | Naval interdiction | IRGC incidents
-Ukraine                 — Front line updates | ISW-sourced | Daily briefings
-Gaza / West Bank        — IDF operations | Casualty tracking | Ceasefire status
-Sudan                   — RSF vs SAF | Humanitarian corridor status
-DRC / M23               — Eastern Congo offensive tracking
-Myanmar                 — Junta vs. resistance | KIO/KNLA operations
- + many more active theatres · 6,900+ verified events
-```
+The most-tracked named conflicts, by verified live events (measured 2026-10-04 13:55 ET, the same reading as
+Coverage, Measured above):
+
+| Conflict | Events |
+|---|---:|
+| Russia-Ukraine War | 1,628 |
+| US-Iran Conflict, including the Strait of Hormuz | 1,116 |
+| Sudanese Civil War | 620 |
+| Israel-Hamas War | 502 |
+| Israel-Hezbollah Conflict | 329 |
+| Myanmar Civil War | 255 |
+| M23 Rebellion | 175 |
+| Red Sea Crisis | 174 |
+| Haiti Gang Conflict | 166 |
+
+Plus 183 more named conflicts.
 
 ---
 
 ## How It Is Built
 
 warheatmap.app is a Base44 application, and has been since 2026-03-05. Events are Base44 entities, and the
-public feed is Base44's entity API. Cloudflare fronts the domain and hosts the satellite services on subdomains:
-the OSINT desks that post to Bluesky and the share cards. StraitTracker, an earlier Cloudflare mini app, is
-retired and archived here. The D1 databases belong to those
-services. The app's own source is platform-managed and is not in this repository. The `workers/` tree here is the
-Cloudflare side only, and the Tech Stack, Architecture and Deploy Your Own sections below describe those
-satellite services, not the map app.
+public feed is Base44's entity API. Headlines from vetted outlets are ingested, analysed and merged for duplicates
+on the app's backend. The app's own source is platform-managed and is not in this repository.
+
+Cloudflare fronts the domain and hosts the satellite services: the OSINT desks that post to Bluesky, the share
+cards, and the worker on `warheatmap.app/*` that adds the support button. StraitTracker, an earlier Cloudflare
+mini app, is retired and archived here.
 
 ## Tech Stack
 
 ```
-Frontend:     Leaflet.js · Vanilla JS · CSS Grid · WebSocket
-Backend:      Cloudflare Workers (Edge Runtime, v8 isolates)
-Database:     Cloudflare D1 (SQLite at the edge)
-Cache:        Cloudflare KV (analytics + event cache)
-Storage:      Cloudflare R2 (media assets)
-Social:       AT Protocol → Bluesky (auto campaign drip)
-CDN:          Cloudflare Global Network (330+ PoPs)
-Mobile:       Dedicated mobile Worker with adaptive layout
+App:          Base44 application · React · Base44 entities and entity API
+Maps:         MapLibre GL (desktop) · Leaflet (mobile map and naval layer)
+Event pages:  Server-rendered per event at /e/<id> · sitemap index by month
+Edge:         Cloudflare Workers in front of the domain and for the satellite services
+Social:       AT Protocol → Bluesky (@indica.osintnet.uk)
+This repo:    GitHub Actions + GitHub Pages for the live card, 7-day map and mini map
 ```
 
 ---
@@ -241,73 +250,76 @@ Mobile:       Dedicated mobile Worker with adaptive layout
 ## Architecture
 
 ```
-News Sources → Cloudflare Worker (strait-news-worker)
-             → D1 Database (event log)
-             → KV Cache (analytics)
-             → Warheatmap Frontend (warheatmap-worker)
-                    ↓
-            Leaflet.js Interactive Map
-                    ↓
-            AT Protocol Publisher → Bluesky Thread
+Vetted outlets (sources registry, fail-closed allowlist)
+        ↓
+Ingest, AI analysis and duplicate merging   (warheatmap.app backend)
+        ↓
+Event entities ──→ warheatmap.app            (React · MapLibre GL / Leaflet)
+               ──→ /e/<id> event pages + sitemap index
+               ──→ public Event API ──→ this repo: live card, 7-day map, mini map   (about every 30 minutes)
+               ──→ OSINT desks ──→ Bluesky
 ```
 
 ---
 
 ### SEO & Crawlability
 
-WarHeatMap is a client-rendered SPA for speed, but AI crawlers and search engines need
-readable HTML. The origin serves a structured **answer block** — an accessible H1, an FAQ,
-a live-event summary, and JSON-LD schema (WebSite, Organization, FAQPage) — so bots can
-ground citations on real content. Human visitors get the full interactive map; crawlers get
-substance. Search performance is tracked on a weekly reporting loop to measure ranking lift.
+The map is a client-rendered app, but search engines and AI crawlers get readable HTML. The home page carries
+an accessible H1, an FAQ and JSON-LD (WebSite, Organization, FAQPage and more), and every event has its own
+server-rendered page with a canonical URL, listed in a sitemap index with one child per month.
 
 ## Repo Structure
 
 ```
 /
-├── workers/
-│   ├── warheatmap-worker.js      # Main frontend + map (CF Worker)
-│   ├── strait-tracker-worker.js  # Naval OSINT dashboard (CF Worker)
-│   └── credit-tracker.js        # Credit/usage tracking (CF Worker)
-├── wrangler.toml.example         # Deploy config template
+├── live/                         # Live card, 7-day map and mini map (built by GitHub Actions)
+│   ├── build_live.py
+│   ├── index.html
+│   └── land.json
+├── docs/history/                 # The app's full production deploy record, synced daily
+├── assets/                       # Header and coverage chart
+├── workers/                      # Cloudflare worker copies (see below)
+├── .github/workflows/live.yml    # Rebuilds the live pages about every 30 minutes
+├── wrangler.toml.example
+├── CHANGELOG.md
 ├── LICENSE                       # MIT
 └── README.md
 ```
 
+The `workers/` folder holds source copies, not the running map app. `whm-fab-injector.js` is the support-button
+worker in front of warheatmap.app. The `strait-*` files are the retired StraitTracker. The `facemap-*` and
+`facerec-tracker.js` files belong to FaceHeatMap, a separate archived project, and none of these are currently
+deployed.
+
 ---
 
-## Deploy Your Own
+## Run It Yourself
+
+The map app runs on Base44, and its source is not in this repository, so it cannot be deployed from here. What
+you can run is the live build, which reads the public event feed and writes the card, the map and the mini map:
 
 ```bash
-# Clone
 git clone https://github.com/indicaindependent/warheatmap
 cd warheatmap
-
-# Install Wrangler
-npm install -g wrangler
-
-# Copy config
-cp wrangler.toml.example wrangler.toml
-# Edit wrangler.toml — add your D1 binding, KV namespace IDs
-
-# Create D1 database
-wrangler d1 create warheatmap-db
-
-# Deploy main worker
-wrangler deploy workers/warheatmap-worker.js
-
+python3 live/build_live.py      # writes _site/ (Python 3, standard library only)
 ```
+
+`wrangler.toml.example` is kept from the Cloudflare era and points at a `workers/warheatmap-worker.js` that
+is no longer in this repository.
 
 ---
 
 ## Data Sources
 
-- **ISW (Institute for the Study of War)** — Daily Ukraine/conflict assessments
-- **MarineTraffic / VesselFinder** — Real-time AIS ship positioning
-- **Reuters, AP, Al Jazeera** — Breaking news aggregation
-- **FOIA / Open Source** — Government procurement & military contracts
-- **USNI News** — Naval Institute conflict reporting
-- **OSINT Community** — Verified open-source intelligence
+Every headline is checked against a **[published sources registry](https://osint2.ptsdtree.com/sources)** before
+it becomes an event. It is a strict allowlist: approved outlets are kept, banned outlets are dropped, and unknown
+outlets are dropped too. On 2026-10-04 it listed 164 approved outlets (9 wire agencies and 155 regional) and 94
+banned. The most cited include:
+
+- **Wire agencies:** Reuters, Associated Press, AFP
+- **Regional and international outlets:** Al Jazeera, Anadolu Agency, The Guardian, Sudan Tribune, The Hindu, The Kyiv Independent
+- **UN and humanitarian agencies:** UN News, OCHA, UNHCR, IOM, for displacement events
+- **ISW (Institute for the Study of War):** Ukraine assessments
 
 ---
 
@@ -323,7 +335,7 @@ PRs welcome. If you spot a conflict zone we're missing or a broken data feed —
 
 *The world is on fire. Someone has to map it.*
 
-[Follow on Bluesky](https://bsky.app/profile/indicaindependent.bsky.social)
+[Follow on Bluesky](https://bsky.app/profile/indica.osintnet.uk)
 
 </div>
 

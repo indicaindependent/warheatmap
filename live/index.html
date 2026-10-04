@@ -67,8 +67,8 @@ td.t{width:50%}.talk{background:var(--card);border:1px solid var(--border);borde
 </main>
 <script>
 "use strict";
-const FEED="https://warheatmap.app/api/apps/69a98e80dfb929a404aaf775/entities/Event?limit=500&sort=-event_date";
-const PAGE="https://warheatmap.app/functions/eventPage?e=";
+const FEED="https://warheatmap.app/api/apps/69a98e80dfb929a404aaf775/entities/Event?limit=500&sort=-event_date&verified=true&marked_for_deletion=false";
+const PAGE="https://warheatmap.app/e/";
 const SEV=["critical","high","medium","low"], R={critical:6,high:5,medium:4,low:3.3};
 const W=1000,H=420,L0=84,L1=-56,NS="http://www.w3.org/2000/svg";
 let all=[],win=7,sevOn=new Set(SEV),cat="",selId=null;
@@ -78,6 +78,7 @@ const px=l=>(Number(l)+180)/360*W, py=l=>(L0-Number(l))/(L0-L1)*H;
 const ts=e=>{const v=String(e.event_date||"");return Date.parse(/T/.test(v)&&!/(Z|[+-]\d\d:\d\d)$/.test(v)?v+"Z":v)};
 const sev=e=>String(e.severity||"").toLowerCase();
 const cssv=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const cites=e=>{const s=(Array.isArray(e.sources)?e.sources:[]).filter(x=>x&&(x.name||x.url));return s.length?s:((e.source_name||e.source_url)?[{name:e.source_name,url:e.source_url}]:[]);};
 const safeUrl=u=>{try{const x=new URL(u);return (x.protocol==="https:"||x.protocol==="http:")?x.href:null}catch(_){return null}};
 function td(tr,t,cls){const c=document.createElement("td");c.textContent=t;if(cls)c.className=cls;tr.appendChild(c);return c}
 async function land(){const j=await (await fetch("land.json")).json();const g=el("g",{fill:cssv("--card2")});
@@ -92,7 +93,7 @@ function show(e){selId=e.id;const d=$("detail");d.textContent="";
   m.textContent=[new Date(ts(e)).toISOString().slice(0,16).replace("T"," ")+" UTC",sev(e).toUpperCase(),e.category,e.country,e.region].filter(Boolean).join(" · ");d.appendChild(m);
   if(e.description){const p=document.createElement("p");p.style.margin="8px 0";p.textContent=String(e.description).slice(0,600);d.appendChild(p);}
   const links=document.createElement("div");const a=document.createElement("a");a.href=PAGE+encodeURIComponent(e.id);a.rel="noopener";a.textContent="Open on WarHeatMap";links.appendChild(a);
-  const su=safeUrl(e.source_url);if(su){links.appendChild(document.createTextNode("  ·  "));const b=document.createElement("a");b.href=su;b.rel="noopener noreferrer";b.textContent="Source: "+(e.source_name||"link");links.appendChild(b);}
+  for(const c of cites(e)){links.appendChild(document.createTextNode("  ·  "));const su=safeUrl(c.url);const b=document.createElement(su?"a":"span");if(su){b.href=su;b.rel="noopener noreferrer";}b.textContent="Source: "+(c.name||"link");links.appendChild(b);}
   d.appendChild(links);}
 function render(){const s=shown();const g=$("dots");g.textContent="";
   const ord={low:0,medium:1,high:2,critical:3};
@@ -107,7 +108,7 @@ function render(){const s=shown();const g=$("dots");g.textContent="";
   for(const e of s.slice(0,40)){const tr=document.createElement("tr");tr.tabIndex=0;tr.style.cursor="pointer";
     td(tr,new Date(ts(e)).toISOString().slice(5,16).replace("T"," "));
     const sc=td(tr,"");const sw=document.createElement("i");sw.className="sw";sw.style.background=cssv("--"+sev(e));sc.appendChild(sw);sc.appendChild(document.createTextNode(sev(e).toUpperCase()));
-    td(tr,e.country||"");td(tr,e.title||"","t");td(tr,e.source_name||"","src");
+    td(tr,e.country||"");td(tr,e.title||"","t");td(tr,(c=>c.length>1?(c[0].name||"source")+" +"+(c.length-1):(c[0]?c[0].name||"":""))(cites(e)),"src");
     tr.addEventListener("click",()=>show(e));tr.addEventListener("keydown",k=>{if(k.key==="Enter")show(e)});tb.appendChild(tr);}}
 document.querySelectorAll("[data-win]").forEach(b=>b.addEventListener("click",()=>{win=Number(b.dataset.win);
   document.querySelectorAll("[data-win]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));render();}));
@@ -117,7 +118,7 @@ $("cat").addEventListener("change",e=>{cat=e.target.value;render();});
 (async()=>{try{await land();}catch(_){}
   $("map").appendChild(el("g",{id:"dots"}));
   try{const r=await fetch(FEED,{credentials:"omit",referrerPolicy:"no-referrer"});if(!r.ok)throw new Error("HTTP "+r.status);
-    all=(await r.json()).filter(e=>isFinite(ts(e)));
+    all=(await r.json()).filter(e=>isFinite(ts(e))&&e.verified===true&&!e.marked_for_deletion&&!e.is_sample);
     for(const c of [...new Set(all.map(e=>e.category).filter(Boolean))].sort()){const o=document.createElement("option");o.value=c;o.textContent=c.replace(/_/g," ");$("cat").appendChild(o);}
     $("status").textContent=`Live from warheatmap.app, read ${new Date().toISOString().slice(0,16).replace("T"," ")} UTC. Newest event: ${new Date(ts(all[0])).toISOString().slice(0,16).replace("T"," ")} UTC. Reload for the latest.`;
     render();

@@ -10,9 +10,9 @@ import json, os, re, shutil, sys, urllib.request, datetime as dt
 from xml.sax.saxutils import escape
 
 APP = "69a98e80dfb929a404aaf775"
-FEED = f"https://warheatmap.app/api/apps/{APP}/entities/Event?limit=500&sort=-event_date"
+FEED = f"https://warheatmap.app/api/apps/{APP}/entities/Event?limit=500&sort=-event_date&verified=true&marked_for_deletion=false"
 SITEMAP = "https://warheatmap.app/functions/sitemap"
-EVENT_URL = "https://warheatmap.app/functions/eventPage?e="
+EVENT_URL = "https://warheatmap.app/e/"  # canonical event page since 2026-10-03
 HERE = os.path.dirname(os.path.abspath(__file__)); OUT = os.path.join(HERE, "..", "_site")
 
 BG, CARD, CARD2, BORDER = "#0B1015", "#161E27", "#1E2833", "#33424F"
@@ -33,6 +33,15 @@ def when(e):
     except ValueError: return None
     return t if t.tzinfo else t.replace(tzinfo=dt.timezone.utc)
 
+def names(e):
+    # Merged events list every outlet in sources[]; older rows carry only source_name.
+    n = [str(s.get("name")) for s in (e.get("sources") or []) if isinstance(s, dict) and s.get("name")]
+    return n or ([e["source_name"]] if e.get("source_name") else [])
+
+def cite(e):
+    n = names(e)
+    return "" if not n else n[0] if len(n) == 1 else f"{n[0]} +{len(n) - 1}"
+
 def T(x, y, s, size=11, fill=TEXT, w=400, anchor="start", ls=0):
     return (f'<text x="{x}" y="{y}" font-family="{MONO}" font-size="{size}" fill="{fill}" font-weight="{w}" '
             f'text-anchor="{anchor}" letter-spacing="{ls}">{escape(str(s))}</text>')
@@ -43,9 +52,18 @@ def clip(s, n):
 
 def main():
     now = dt.datetime.now(dt.timezone.utc)
-    events = [e for e in json.loads(get(FEED)) if when(e)]
+    # The site merges duplicates (losers carry marked_for_deletion) and unverifies source-less rows.
+    # The query filters both server-side; this re-checks them so a dropped query parameter cannot
+    # quietly bring the duplicates back.
+    events = [e for e in json.loads(get(FEED)) if when(e) and e.get("verified") is True
+              and not e.get("marked_for_deletion") and not e.get("is_sample")]
     if len(events) < 10: sys.exit(f"feed returned {len(events)} events; refusing to publish a near-empty card")
-    try: indexed = get(SITEMAP, 120).decode("utf-8", "replace").count("eventPage?e=")
+    # The sitemap is an index since 2026-10-03: follow its events-YYYY-MM children and count event
+    # URLs. Any child failing to load voids the figure rather than publishing an undercount.
+    try:
+        idx = get(SITEMAP, 120).decode("utf-8", "replace")
+        parts = [u.replace("&amp;", "&") for u in re.findall(r"<loc>([^<]+)</loc>", idx) if "part=events-" in u]
+        indexed = sum(get(u, 120).decode("utf-8", "replace").count("<loc>https://warheatmap.app/e/") for u in parts) if parts else None
     except Exception: indexed = None
     d24 = [e for e in events if (now - when(e)).total_seconds() <= 86400]
     d7 = [e for e in events if (now - when(e)).total_seconds() <= 7 * 86400]
@@ -96,7 +114,7 @@ def main():
               T(54, y, when(e).strftime("%m-%d %H:%M"), 11, MUTED),
               T(160, y, clip(e.get("country"), 14), 11, TEXT, 700),
               T(290, y, clip(e.get("title"), 62), 11, TEXT),
-              T(W - 36, y, clip(e.get("source_name"), 20), 10, MUTED, anchor="end")]
+              T(W - 36, y, clip(cite(e), 20), 10, MUTED, anchor="end")]
         y += 26
     o.append(f'<line x1="36" y1="{H-54}" x2="{W-36}" y2="{H-54}" stroke="{BORDER}"/>')
     o.append(T(36, H - 32, "Times UTC. Counts are the newest 500 events in the public feed, windowed by event time. Click through for the interactive map.", 10, MUTED))
@@ -146,7 +164,7 @@ def main():
         c = str(e.get("category") or "other").replace("_", " ").lower(); cats[c] = cats.get(c, 0) + 1
     cats = sorted(cats.items(), key=lambda kv: (-kv[1], kv[0]))
     conflicts = {e.get("conflict_name") for e in win if e.get("conflict_name")}
-    sources = {e.get("source_name") for e in win if e.get("source_name")}
+    sources = {n for e in win for n in names(e)}
     sevw = {k: sum(1 for e in win if str(e.get("severity", "")).lower() == k) for k in SEV}
     n = len(win); pct = lambda v: f"{100 * v / n:.1f}%"
     W2 = 980; top = 176; rh = 19; H2 = top + len(cats) * rh + 150

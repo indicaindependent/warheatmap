@@ -280,7 +280,6 @@ server-rendered page with a canonical URL, listed in a sitemap index with one ch
 ├── assets/                       # Header and coverage chart
 ├── workers/                      # Cloudflare worker copies (see below)
 ├── .github/workflows/live.yml    # Rebuilds the live pages about every 30 minutes
-├── wrangler.toml.example
 ├── CHANGELOG.md
 ├── LICENSE                       # MIT
 └── README.md
@@ -303,9 +302,6 @@ git clone https://github.com/indicaindependent/warheatmap
 cd warheatmap
 python3 live/build_live.py      # writes _site/ (Python 3, standard library only)
 ```
-
-`wrangler.toml.example` is kept from the Cloudflare era and points at a `workers/warheatmap-worker.js` that
-is no longer in this repository.
 
 ---
 

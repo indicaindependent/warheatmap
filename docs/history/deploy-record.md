@@ -1,7 +1,7 @@
 # warheatmap.app deploy record
 
 Every change deployed to production on warheatmap.app, oldest first. Read directly from Base44's checkpoint
-history for the app, refreshed daily: 508 checkpoints saved, 236 deployed. Only deployed ones are
+history for the app, refreshed daily: 510 checkpoints saved, 237 deployed. Only deployed ones are
 listed. Latest deploy: 2026-10-04.
 
 - **Deployed (UTC)** is when that change last went live, from Base44's server clock.
@@ -250,4 +250,5 @@ The curated history is in [CHANGELOG.md](../../CHANGELOG.md). This file is the r
 | 2026-10-04 02:18 | Update event page layout and structure | b85d33949b |
 | 2026-10-04 04:56 | Implement minor severity event filtering and deduplication logic | 3f5d073744 |
 | 2026-10-04 05:08 | Add severity filter toggle to home and country feeds | 4b9e141d15 |
-| 2026-10-04 12:05 | Remove medium and low severity filter toggle | 34c280fb6f |
+| 2026-10-04 17:22 | Remove medium and low severity filter toggle | 34c280fb6f |
+| 2026-10-04 17:30 | Reverting Erroneous Event Merges | 6ad0ae4b25 |

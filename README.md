@@ -242,7 +242,7 @@ repository.
 |---|---|
 | **Edge layer** | Sits in front of warheatmap.app and passes visitors through to the app unchanged. For crawlers it answers event pages with real HTTP status (200 for a live event, 301 for a merged duplicate, 404 for an unknown id), serves the server-rendered article and the home page answer block, and sends `www` to the apex. If it fails, requests fall through to the app. |
 | **Sources registry and news research** | Holds the public, fail-closed allowlist of outlets and gathers headlines region by region. The app ingests only headlines that pass it. |
-| **Agent data service (MCP)** | A Model Context Protocol server over the app's Event and Source data, so our AI agents can read the event corpus, conflict and source stats and run SEO audits. Tool discovery is open; reading and curating events requires owner authorization. It also supplies the live event feed behind the crawler pages. |
+| **Agent data service (MCP)** | A Model Context Protocol server over the app's Event and Source data, so our AI agents can read the event corpus, conflict and source stats and run SEO audits. Tool discovery is open; reading and curating events requires owner authorization. |
 | **OSINT desk pipeline** | Research desks compose threads, a fact-check gate checks every thread's claims before publication, a scheduler publishes them, and a posting engine adds images and posts to Bluesky as @indica.osintnet.uk. The desks' post cards are rendered here too. |
 | **Lightning tips** | The Lightning address behind Support the Mission, resolving to our own node, so no third party touches the sats. |
 | **Watchdog** | An hourly health check that alerts by Telegram. |

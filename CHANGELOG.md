@@ -3,8 +3,8 @@
 The complete build history of [warheatmap.app](https://warheatmap.app), newest first. Dates are UTC.
 
 **Where this comes from.** warheatmap.app is a Base44 application, and Base44 keeps a checkpoint for every change
-made to it. This history is built from that record, refreshed daily: 488 checkpoints from 2026-03-05 to
-2026-09-28, of which 225 were deployed to production. The full list is in
+made to it. This history is built from that record, refreshed daily: 508 checkpoints from 2026-03-05 to
+2026-10-04, of which 236 were deployed to production. The full list is in
 [docs/history/deploy-record.md](docs/history/deploy-record.md). Entries below are production deploys only, grouped into milestones, in the builder's
 own words where possible (they are builder checkpoint titles, not release notes). The app has never carried a
 version number, so none is invented here.
@@ -26,8 +26,27 @@ From 2026-09-28 on, every change to the app or this repo gets a dated entry here
 | 2026-07 | 25 | Ukraine Intel Tracker, SEO, MapLibre GL, event deep links |
 | 2026-08 | 40 | Deep-link grammar, share pipeline, server-rendered event pages, performance |
 | 2026-09 | 7 | Local OG card rendering, Talk page, event clustering, server-side news analysis |
+| 2026-10 | 11 | Duplicate merging, canonical event pages, sitemap index, critical and high feed, SVG icons |
 
-Counts are deployed changes per month, by deploy date. They total 225.
+Counts are deployed changes per month, by deploy date. They total 236.
+
+## October 2026
+
+- **2026-10-04** (this repo) The live card, the 7-day map and the mini map follow the app's duplicate merging:
+  merged and unverified events no longer appear, event links open the canonical `/e/<id>` page, and a merged
+  event lists every outlet that reported it.
+- **2026-10-04** The feed shows critical and high severity events. A medium and low toggle added earlier the same
+  day was removed; a deep link with `?severity=medium` or `?severity=low` still shows that tier.
+- **2026-10-04** Duplicate events are merged at ingest, and a one-time backfill folded 831 duplicates into their
+  earliest copy, taking live verified events from 6,872 to 6,098. A merged event keeps every outlet's citation.
+  Severity values are now always lower case, and an event with no source is no longer marked verified.
+- **2026-10-04** Event pages rebuilt at the canonical address `/e/<id>`: server-rendered, with a unique title,
+  description, structured data and a visible source line. The sitemap is now an index with one child per month.
+- **2026-10-04** Event fetching tuned to cut read traffic; the news ticker carries critical events only.
+- **2026-10-04** Every emoji in the app replaced with an SVG icon.
+- **2026-10-03** News and displacement ingest restricted to vetted headlines. The sources registry lists 164
+  approved outlets and 94 banned, and adds IOM, UNHCR and OCHA for displacement events. Ukraine Ground Truth
+  cards now rebuild automatically every morning.
 
 ## September 2026
 

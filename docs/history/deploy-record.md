@@ -1,8 +1,8 @@
 # warheatmap.app deploy record
 
 Every change deployed to production on warheatmap.app, oldest first. Read directly from Base44's checkpoint
-history for the app, refreshed daily: 517 checkpoints saved, 241 deployed. Only deployed ones are
-listed. Latest deploy: 2026-10-04.
+history for the app, refreshed daily: 543 checkpoints saved, 255 deployed. Only deployed ones are
+listed. Latest deploy: 2026-10-11.
 
 - **Deployed (UTC)** is when that change last went live, from Base44's server clock.
 - **Title** is the app builder's own name for the change, verbatim. These are working notes, not release notes,
@@ -256,3 +256,17 @@ The curated history is in [CHANGELOG.md](../../CHANGELOG.md). This file is the r
 | 2026-10-04 19:12 | Improve event page SEO and sitemap handling | 4ed154733a |
 | 2026-10-04 19:31 | Preserve merged duplicate events in daily purge | 5684673350 |
 | 2026-10-04 20:15 | Remove mobile map style toggles and lock to dark ops map | 3f6bd2b3bf |
+| 2026-10-11 15:41 | Implement Phase 0 updates for casualty tracking, auth, and event schema | daf81ac36b |
+| 2026-10-11 17:41 | Implement event revision tracking and update casualty counting logic | df5edb1cc0 |
+| 2026-10-11 18:02 | Implement automated event ingestion workflows and backfill logic | d0a8172208 |
+| 2026-10-11 19:09 | Implement methodology page and update event data displays | 6823f3040c |
+| 2026-10-11 19:11 | Add source paragraphs and update section layout | f61220a836 |
+| 2026-10-11 19:18 | Update map markers and normalize location labels | d8d337ba25 |
+| 2026-10-11 20:07 | Optimize feed loading and implement severity filter labels | 5d3bc2f637 |
+| 2026-10-11 20:21 | Update time window labels and add methodology section with live registry statistics | f9881c1b37 |
+| 2026-10-11 20:59 | Fetch lite feed from external host with fallback to same-origin | 680eb0825f |
+| 2026-10-11 21:37 | Standardize text sizes and apply color contrast updates | 515e82598a |
+| 2026-10-11 21:42 | Remove Nat Geo map layer | edbce9c361 |
+| 2026-10-11 22:00 | Improve accessibility for map markers, buttons, and contrast components | b7278d63f3 |
+| 2026-10-11 22:04 | Add accessibility label to install prompt close button | 4dafa3e687 |
+| 2026-10-11 22:13 | Implement regrade sweep logic for casualty data corrections | 3959fbd973 |

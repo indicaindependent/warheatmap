@@ -1,8 +1,8 @@
 # warheatmap.app deploy record
 
 Every change deployed to production on warheatmap.app, oldest first. Read directly from Base44's checkpoint
-history for the app, refreshed daily: 543 checkpoints saved, 255 deployed. Only deployed ones are
-listed. Latest deploy: 2026-10-11.
+history for the app, refreshed daily: 563 checkpoints saved, 260 deployed. Only deployed ones are
+listed. Latest deploy: 2026-10-13.
 
 - **Deployed (UTC)** is when that change last went live, from Base44's server clock.
 - **Title** is the app builder's own name for the change, verbatim. These are working notes, not release notes,
@@ -270,3 +270,8 @@ The curated history is in [CHANGELOG.md](../../CHANGELOG.md). This file is the r
 | 2026-10-11 22:00 | Improve accessibility for map markers, buttons, and contrast components | b7278d63f3 |
 | 2026-10-11 22:04 | Add accessibility label to install prompt close button | 4dafa3e687 |
 | 2026-10-11 22:13 | Implement regrade sweep logic for casualty data corrections | 3959fbd973 |
+| 2026-10-12 17:06 | Audit Casualty Reporting Data | 8b8da55e04 |
+| 2026-10-12 17:29 | Fix marker positioning bug by removing inline relative styles | d1295d6be7 |
+| 2026-10-12 21:49 | Refine methodology section and add exclusion labels to event pages | 75a1d4ba0a |
+| 2026-10-12 21:53 | Badge Display Behavior Analysis | 75a1d4ba0a |
+| 2026-10-13 11:09 | Revert push notification logic to pre-Step C state | 53b6a2f6c3 |

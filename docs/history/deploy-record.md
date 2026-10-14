@@ -1,7 +1,7 @@
 # warheatmap.app deploy record
 
 Every change deployed to production on warheatmap.app, oldest first. Read directly from Base44's checkpoint
-history for the app, refreshed daily: 563 checkpoints saved, 260 deployed. Only deployed ones are
+history for the app, refreshed daily: 571 checkpoints saved, 266 deployed. Only deployed ones are
 listed. Latest deploy: 2026-10-13.
 
 - **Deployed (UTC)** is when that change last went live, from Base44's server clock.
@@ -275,3 +275,9 @@ The curated history is in [CHANGELOG.md](../../CHANGELOG.md). This file is the r
 | 2026-10-12 21:49 | Refine methodology section and add exclusion labels to event pages | 75a1d4ba0a |
 | 2026-10-12 21:53 | Badge Display Behavior Analysis | 75a1d4ba0a |
 | 2026-10-13 11:09 | Revert push notification logic to pre-Step C state | 53b6a2f6c3 |
+| 2026-10-13 12:17 | Implement opt-in push notifications and near-duplicate alert filtering | 94d63a60f6 |
+| 2026-10-13 12:36 | Add public API documentation and remove Google Analytics | da4f274af9 |
+| 2026-10-13 17:15 | Remove all basemap options and default to Dark Ops | 0496c4dcde |
+| 2026-10-13 17:35 | Refactor heat layer with dynamic styling and controls | 5e89140889 |
+| 2026-10-13 22:33 | Optimize mobile map layout and synchronize heat settings | 5f3f9754c7 |
+| 2026-10-13 23:53 | Fix mobile UI overlap for LAYERS button and status label | d31d43ee65 |

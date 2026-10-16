@@ -1,8 +1,8 @@
 # warheatmap.app deploy record
 
 Every change deployed to production on warheatmap.app, oldest first. Read directly from Base44's checkpoint
-history for the app, refreshed daily: 571 checkpoints saved, 266 deployed. Only deployed ones are
-listed. Latest deploy: 2026-10-13.
+history for the app, refreshed daily: 576 checkpoints saved, 269 deployed. Only deployed ones are
+listed. Latest deploy: 2026-10-16.
 
 - **Deployed (UTC)** is when that change last went live, from Base44's server clock.
 - **Title** is the app builder's own name for the change, verbatim. These are working notes, not release notes,
@@ -281,3 +281,6 @@ The curated history is in [CHANGELOG.md](../../CHANGELOG.md). This file is the r
 | 2026-10-13 17:35 | Refactor heat layer with dynamic styling and controls | 5e89140889 |
 | 2026-10-13 22:33 | Optimize mobile map layout and synchronize heat settings | 5f3f9754c7 |
 | 2026-10-13 23:53 | Fix mobile UI overlap for LAYERS button and status label | d31d43ee65 |
+| 2026-10-16 09:16 | Replace Bitcoin tip links with official Ukraine donation channels | 5668fecff7 |
+| 2026-10-16 09:44 | Add dedicated row for support message and update status bar layout | 27704ca7a7 |
+| 2026-10-16 11:17 | Fix timezone offset in event date display | dac4dfaa62 |

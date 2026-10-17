@@ -46,6 +46,7 @@ From 2026-09-28 on, every change to the app or this repo gets a dated entry here
 
 ### Repository updates since August 13
 
+- **2026-10-17: Dedicated to Ukraine.** The Lightning tip path is retired here. The support section now points only to UNITED24 and the National Bank of Ukraine, matching the app.
 - **2026-10-04: How It Is Built rewritten** from a read of the live edge services: the app on Base44, and the
   Cloudflare edge layer, sources registry, MCP data service, OSINT desk pipeline, Lightning tips and
   watchdog around it.
@@ -244,7 +245,6 @@ repository.
 | **Sources registry and news research** | Holds the public, fail-closed allowlist of outlets and gathers headlines region by region. The app ingests only headlines that pass it. |
 | **Agent data service (MCP)** | A Model Context Protocol server over the app's Event and Source data, so our AI agents can read the event corpus, conflict and source stats and run SEO audits. Tool discovery is open; reading and curating events requires owner authorization. |
 | **OSINT desk pipeline** | Research desks compose threads, a fact-check gate checks every thread's claims before publication, a scheduler publishes them, and a posting engine adds images and posts to Bluesky as @indica.osintnet.uk. The desks' post cards are rendered here too. |
-| **Lightning tips** | The Lightning address behind Support the Mission, resolving to our own node, so no third party touches the sats. |
 | **Watchdog** | An hourly health check that alerts by Telegram. |
 
 StraitTracker, an earlier Cloudflare mini app, is retired and archived here.
@@ -255,8 +255,8 @@ StraitTracker, an earlier Cloudflare mini app, is retired and archived here.
 App (Base44):     React · MapLibre GL (desktop) · Leaflet (mobile map and naval layer)
                   Event entities · public Event API · backend functions for ingest, analysis and share images
 Event pages:      One per event at /e/<id> · sitemap index by month
-Edge (Cloudflare): Workers for the edge layer, sources registry, MCP data service, OSINT desks,
-                  Lightning tips and watchdog
+Edge (Cloudflare): Workers for the edge layer, sources registry, MCP data service, OSINT desks
+                  and watchdog
                   Workers AI · D1 · KV · R2 where a service keeps state
 Social:           AT Protocol → Bluesky
 This repo:        GitHub Actions + GitHub Pages for the live card, 7-day map and mini map
@@ -360,11 +360,9 @@ PRs welcome. If you spot a conflict zone we're missing or a broken data feed —
 
 ---
 
-## Support the Mission
+## Support Ukraine
 
-This is free, ad-free, independent infrastructure — no VC, no gov funding, no strings. If it served you, a tip keeps it alive and funds the next tool.
+WarHeatMap is dedicated to the people of Ukraine. It takes no tips. If it serves you, give directly to Ukraine's defense through its official channels:
 
-[Donate via SkyGive](https://donate.skygive.app/)
-[Lightning](https://donate.skygive.app/)
-
-<sub> Sovereign Lightning + on-chain via SkyGive. Your sats fund uptime, not ads.</sub>
+[Donate to UNITED24 Defense](https://u24.gov.ua/donate/defense)
+[Support the Armed Forces, National Bank of Ukraine](https://bank.gov.ua/en/about/support-the-armed-forces/)

@@ -283,4 +283,4 @@ The curated history is in [CHANGELOG.md](../../CHANGELOG.md). This file is the r
 | 2026-10-13 23:53 | Fix mobile UI overlap for LAYERS button and status label | d31d43ee65 |
 | 2026-10-16 09:16 | Replace Bitcoin tip links with official Ukraine donation channels | 5668fecff7 |
 | 2026-10-16 09:44 | Add dedicated row for support message and update status bar layout | 27704ca7a7 |
-| 2026-10-16 11:17 | Fix timezone offset in event date display | dac4dfaa62 |
+| 2026-10-16 15:39 | Fix timezone offset in event date display | dac4dfaa62 |

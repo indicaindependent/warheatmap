@@ -1,4 +1,3 @@
-# Support independent OSINT and open tooling - sovereign Lightning via SkyGive.
-# One donation path, self-hosted, non-custodial, zero fee.
-# Lightning address: tips@skygive.app
-custom: ["https://donate.skygive.app/"]
+# WarHeatMap is dedicated to the people of Ukraine. It takes no tips.
+# Give directly to Ukraine's defense through its official channels.
+custom: ["https://u24.gov.ua/donate/defense", "https://bank.gov.ua/en/about/support-the-armed-forces/"]

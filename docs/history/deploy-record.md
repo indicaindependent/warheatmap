@@ -1,15 +1,15 @@
 # warheatmap.app deploy record
 
 Every change deployed to production on warheatmap.app, oldest first. Read directly from Base44's checkpoint
-history for the app, refreshed daily: 576 checkpoints saved, 269 deployed. Only deployed ones are
-listed. Latest deploy: 2026-10-16.
+history for the app, refreshed daily: 582 checkpoints saved, 273 deployed. Only deployed ones are
+listed. Latest deploy: 2026-10-18.
 
 - **Deployed (UTC)** is when that change last went live, from Base44's server clock.
 - **Title** is the app builder's own name for the change, verbatim. These are working notes, not release notes,
   so some are generic ("Task Completed.").
 - **Commit** is the first 10 characters of Base44's internal commit hash. The app's source is platform-managed and
   not in this repository, so these identify the change in Base44's history rather than link anywhere here.
-- 4 titles about admin and sign-in access are withheld; their dates stay.
+- 5 titles about admin and sign-in access are withheld; their dates stay.
 
 The curated history is in [CHANGELOG.md](../../CHANGELOG.md). This file is the raw record behind it.
 
@@ -284,3 +284,7 @@ The curated history is in [CHANGELOG.md](../../CHANGELOG.md). This file is the r
 | 2026-10-16 09:16 | Replace Bitcoin tip links with official Ukraine donation channels | 5668fecff7 |
 | 2026-10-16 09:44 | Add dedicated row for support message and update status bar layout | 27704ca7a7 |
 | 2026-10-16 15:39 | Fix timezone offset in event date display | dac4dfaa62 |
+| 2026-10-18 21:11 | Remove sign-in check and enforce source allowlist in news analysis | 8dd63a6d81 |
+| 2026-10-18 21:16 | (access-control change, title withheld) | b81fe060e2 |
+| 2026-10-18 21:27 | Improve source verification, retry logic, and registry handling | a3505aa2a0 |
+| 2026-10-18 21:59 | Exclude non-conflicting events from map views | bc31dffded |

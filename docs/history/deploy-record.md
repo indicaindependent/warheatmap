@@ -1,8 +1,8 @@
 # warheatmap.app deploy record
 
 Every change deployed to production on warheatmap.app, oldest first. Read directly from Base44's checkpoint
-history for the app, refreshed daily: 582 checkpoints saved, 273 deployed. Only deployed ones are
-listed. Latest deploy: 2026-10-18.
+history for the app, refreshed daily: 583 checkpoints saved, 274 deployed. Only deployed ones are
+listed. Latest deploy: 2026-10-20.
 
 - **Deployed (UTC)** is when that change last went live, from Base44's server clock.
 - **Title** is the app builder's own name for the change, verbatim. These are working notes, not release notes,
@@ -288,3 +288,4 @@ The curated history is in [CHANGELOG.md](../../CHANGELOG.md). This file is the r
 | 2026-10-18 21:16 | (access-control change, title withheld) | b81fe060e2 |
 | 2026-10-18 21:27 | Improve source verification, retry logic, and registry handling | a3505aa2a0 |
 | 2026-10-18 21:59 | Exclude non-conflicting events from map views | bc31dffded |
+| 2026-10-20 13:29 | Integrate live source registry counts across UI and meta files | bd42e7c884 |

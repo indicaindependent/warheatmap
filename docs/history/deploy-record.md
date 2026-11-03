@@ -1,7 +1,7 @@
 # warheatmap.app deploy record
 
 Every change deployed to production on warheatmap.app, oldest first. Read directly from Base44's checkpoint
-history for the app, refreshed daily: 596 checkpoints saved, 275 deployed. Only deployed ones are
+history for the app, refreshed daily: 601 checkpoints saved, 278 deployed. Only deployed ones are
 listed. Latest deploy: 2026-11-02.
 
 - **Deployed (UTC)** is when that change last went live, from Base44's server clock.
@@ -290,3 +290,6 @@ The curated history is in [CHANGELOG.md](../../CHANGELOG.md). This file is the r
 | 2026-10-18 21:59 | Exclude non-conflicting events from map views | bc31dffded |
 | 2026-10-20 13:29 | Integrate live source registry counts across UI and meta files | bd42e7c884 |
 | 2026-11-02 00:11 | Final Release Readiness Report | 521ffa262c |
+| 2026-11-02 15:05 | Fix map illegal invocation error | 64cb74edbb |
+| 2026-11-02 16:10 | Fix test suite hang by resolving React act environment issue | 6f710f96a5 |
+| 2026-11-02 21:42 | Fix map loading race conditions and initialization errors | 94190386b6 |

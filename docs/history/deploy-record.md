@@ -1,8 +1,8 @@
 # warheatmap.app deploy record
 
 Every change deployed to production on warheatmap.app, oldest first. Read directly from Base44's checkpoint
-history for the app, refreshed daily: 616 checkpoints saved, 282 deployed. Only deployed ones are
-listed. Latest deploy: 2026-11-03.
+history for the app, refreshed daily: 627 checkpoints saved, 283 deployed. Only deployed ones are
+listed. Latest deploy: 2026-11-04.
 
 - **Deployed (UTC)** is when that change last went live, from Base44's server clock.
 - **Title** is the app builder's own name for the change, verbatim. These are working notes, not release notes,
@@ -297,3 +297,4 @@ The curated history is in [CHANGELOG.md](../../CHANGELOG.md). This file is the r
 | 2026-11-03 21:07 | Correct saved place lookups and relocate live events | 8299a912e4 |
 | 2026-11-03 22:19 | Ban Barak Ravid and exclude Axios articles | d8ec31e9d6 |
 | 2026-11-03 22:44 | Bug Fixes and Refinements | 1421c403c3 |
+| 2026-11-04 20:55 | Perform registry cleanup and apply source-banned event filtering | 4af96414be |
